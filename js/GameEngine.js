@@ -44,11 +44,6 @@ class GameEngine {
   generateInvaders() {
     let count = 10;
     for (let i = 0; i < count; i++) {
-      console.log(
-        // Math.floor(Math.random() * (this.canvas.width - this.invader.width)),
-        // "RANDOM"
-        typeof this.invader.width
-      );
       let newInvader = new Invaders(
         Math.floor(Math.random() * (this.canvas.width - this.invader.width)),
         Math.floor(Math.random() * (this.canvas.height - this.invader.height))
@@ -137,11 +132,22 @@ class GameEngine {
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     for (let item of this.items) {
-      this.ctx.drawImage(item.getImg(), item.x, item.y, item.width, item.height);
-    //   this.ctx.drawImage(this.invader.getImg(), this.invader.x, this.invader.y, this.invader.width, this.invader.height);
-
+      this.ctx.drawImage(
+        item.getImg(),
+        item.x,
+        item.y,
+        item.width,
+        item.height
+      );
+      //   this.ctx.drawImage(this.invader.getImg(), this.invader.x, this.invader.y, this.invader.width, this.invader.height);
     }
-    this.ctx.drawImage(this.player.getImg(), this.player.x, this.player.y);
+    this.ctx.drawImage(
+      this.player.getImg(),
+      this.player.x,
+      this.player.y,
+      this.player.width,
+      this.player.height
+    );
   }
 
   gameLoop() {
