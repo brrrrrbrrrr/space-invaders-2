@@ -25,7 +25,7 @@ class GameEngine {
     this.canvas.width = innerWidth;
     this.canvas.height = innerHeight;
     this.player = new Player(this.canvas.width / 2.5, this.canvas.height);
-    this.invader = new Invaders(800, 200);
+    this.invader = new Invaders();
     //  this.Player = new Drawable('asset/police_car.png',  300, 500)
   }
 
@@ -42,7 +42,7 @@ class GameEngine {
   }
 
   generateInvaders() {
-    let count = 3;
+    let count = 10;
     for (let i = 0; i < count; i++) {
       console.log(
         // Math.floor(Math.random() * (this.canvas.width - this.invader.width)),
@@ -51,7 +51,7 @@ class GameEngine {
       );
       let newInvader = new Invaders(
         Math.floor(Math.random() * (this.canvas.width - this.invader.width)),
-        200
+        Math.floor(Math.random() * (this.canvas.height - this.invader.height))
       );
       this.items.push(newInvader);
     }
@@ -137,10 +137,11 @@ class GameEngine {
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     for (let item of this.items) {
-      this.ctx.drawImage(item.getImg(), item.x, item.y);
+      this.ctx.drawImage(item.getImg(), item.x, item.y, item.width, item.height);
+    //   this.ctx.drawImage(this.invader.getImg(), this.invader.x, this.invader.y, this.invader.width, this.invader.height);
+
     }
     this.ctx.drawImage(this.player.getImg(), this.player.x, this.player.y);
-    this.ctx.drawImage(this.invader.getImg(), this.invader.x, this.invader.y);
   }
 
   gameLoop() {

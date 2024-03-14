@@ -8,8 +8,8 @@ class Invaders {
       this.img.src = "./assets/images/invader1.png";
       this.x = x;
       this.y = y;
-      this.width= 100;
-      this.height= 100;
+      this.width= 50;
+      this.height= 50;
       this.countFrame = 0;
     }
   
