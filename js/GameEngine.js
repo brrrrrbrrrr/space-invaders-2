@@ -18,6 +18,7 @@ class GameEngine {
   };
 
   speed = 5;
+  invadersSpeed = 0.5;
 
   constructor() {
     this.canvas = document.getElementById("game");
@@ -43,14 +44,21 @@ class GameEngine {
 
   generateInvaders() {
     let count = 10;
+    let invaderHeight = this.invader.height; 
+    let espacement = invaderHeight * 2; 
+
     for (let i = 0; i < count; i++) {
       let newInvader = new Invaders(
-        Math.floor(Math.random() * (this.canvas.width - this.invader.width)),
-        Math.floor(Math.random() * (this.canvas.height - this.invader.height))
+        Math.random() * (this.canvas.width - this.invader.width),
+        (-50 - i * espacement),
+        Math.random() < 0.5 ? -1 : 1,
+        0.5
       );
       this.items.push(newInvader);
     }
   }
+
+ 
 
   initEvent() {
     window.addEventListener("keydown", (event) => {
@@ -97,6 +105,7 @@ class GameEngine {
     // }
 
     this.collisionBorder();
+    this.moveInvaders();
   }
 
   // collisionItem() {
