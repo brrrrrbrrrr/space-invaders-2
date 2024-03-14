@@ -1,11 +1,13 @@
 // import { Drawable } from "./Drawable.js";
 import { Player } from "./Player.js";
+import { Invaders } from "./Invaders.js";
 
 class GameEngine {
   canvas = null;
   ctx = null;
   items = [];
   player = null;
+  invader = [];
 
   keys = {
     up: false,
@@ -21,16 +23,38 @@ class GameEngine {
     this.canvas = document.getElementById("game");
     this.ctx = this.canvas.getContext("2d");
     this.canvas.width = innerWidth;
-    this.canvas.height = innerHeight ;
-    this.player = new Player((this.canvas.width / 2.5), this.canvas.height);
+    this.canvas.height = innerHeight;
+    this.player = new Player(this.canvas.width / 2.5, this.canvas.height);
+    this.invader = new Invaders(800, 200);
     //  this.Player = new Drawable('asset/police_car.png',  300, 500)
   }
 
   init() {
     this.initEvent();
+    this.generateInvaders();
     // this.items = [
-    //     new Player( 200, 200),
+    //     new Invaders( 200, 200),
+    //     new Invaders( 100, 500),
+    //     new Invaders( 240, 250),
+    //     new Invaders( 300, 200),
+    //     new Invaders( 280, 200),
     // ]
+  }
+
+  generateInvaders() {
+    let count = 3;
+    for (let i = 0; i < count; i++) {
+      console.log(
+        // Math.floor(Math.random() * (this.canvas.width - this.invader.width)),
+        // "RANDOM"
+        typeof this.invader.width
+      );
+      let newInvader = new Invaders(
+        Math.floor(Math.random() * (this.canvas.width - this.invader.width)),
+        200
+      );
+      this.items.push(newInvader);
+    }
   }
 
   initEvent() {
@@ -112,11 +136,11 @@ class GameEngine {
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    // for (let item of this.items)
-    // {
-    //     this.ctx.drawImage(item.getImg(), item.x, item.y)
-    // }
+    for (let item of this.items) {
+      this.ctx.drawImage(item.getImg(), item.x, item.y);
+    }
     this.ctx.drawImage(this.player.getImg(), this.player.x, this.player.y);
+    this.ctx.drawImage(this.invader.getImg(), this.invader.x, this.invader.y);
   }
 
   gameLoop() {
@@ -130,18 +154,20 @@ class GameEngine {
   run() {
     this.init();
     let count = 0;
-    // for (let item of this.items)
-    // {
-    //     item.loaded(() => {
-    //         console.log(item)
-    //         if (++count === this.items.length) {
-    //             this.gameLoop()
-    //         }
-    //     })
-    // }
+    for (let item of this.items) {
+      item.loaded(() => {
+        console.log(item);
+        if (++count === this.items.length) {
+          this.gameLoop();
+        }
+      });
+    }
     this.player.loaded(() => {
       this.gameLoop();
     });
+    // this.invader.loaded(() => {
+    //   this.gameLoop();
+    //  })
   }
 }
 
