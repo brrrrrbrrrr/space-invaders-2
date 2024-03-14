@@ -9,6 +9,7 @@ class GameEngine {
   player = null;
   projectiles = [];
 
+
   keys = {
     up: false,
     down: false,
@@ -18,6 +19,7 @@ class GameEngine {
   };
 
   speed = 5;
+  velocity = -10;
 
   constructor() {
     this.canvas = document.getElementById('game');
@@ -25,8 +27,10 @@ class GameEngine {
     this.canvas.width = innerWidth;
     this.canvas.height = innerHeight;
     this.player = new Player(this.canvas.width / 2.5, this.canvas.height);
-    this.projectile = new Projectile(400, this.player.y);
-    //  this.Player = new Drawable('asset/police_car.png',  300, 500)
+    this.projectile = new Projectile(this.player.x, this.player.y - this.player.img.width);
+
+    // this.rateOfFire = 5;
+    // this.shootCoolDown = 0;
   }
 
   init() {
@@ -67,28 +71,42 @@ class GameEngine {
     });
   }
 
+  // timeCycle() {
+  //     if (this.keys.space === true) {
+  //         if(this.shootCoolDown === 0){
+  //             this.shootCoolDown = this.rateOfFire;
+  //             this.projectiles.push(new Projectile(this.player.x, this.player.y));
+  //         }
+  //     }
+  //     if (this.shootCoolDown > 0){
+  //         this.shootCoolDown --;
+  //     }
+  // }
+
   update() {
-    let prevX = this.player.x;
-    let prevY = this.player.y;
+      let prevX = this.player.x;
+      let prevY = this.player.y;
 
-    if (this.keys.left) {
-      this.player.x -= this.speed;
-    }
-    if (this.keys.right) {
-      this.player.x += this.speed;
-    }
-    if (this.keys.space) {
-      console.log(this.projectiles, 'ARRAY PRO');
-      this.projectiles.push(new Projectile(this.player.x, this.player.y));
-      this.projectile.y += 10;
-    }
+      if (this.keys.left) {
+          this.player.x -= this.speed;
+      }
+      if (this.keys.right) {
+          this.player.x += this.speed;
+      }
+      if (this.keys.space) {
+          // setInterval(() => this.timeCycle(), 50);
+          this.projectiles.push(new Projectile(this.projectile.x, this.projectile.y += this.velocity));
+          if (this.keys.left || this.keys.right) {
 
-    // if (this.collisionItem()) {
-    //     this.player.x = prevX
-    //     this.player.y = prevY
-    // }
+          }
+      }
 
-    this.collisionBorder();
+      // if (this.collisionItem()) {
+      //     this.player.x = prevX
+      //     this.player.y = prevY
+      // }
+
+      this.collisionBorder();
   }
 
   // collisionItem() {
@@ -144,22 +162,17 @@ class GameEngine {
 
   run() {
     this.init();
-    let count = 0;
-    // for (let item of this.items)
-    // {
-    //     item.loaded(() => {
-    //         console.log(item)
-    //         if (++count === this.items.length) {
-    //             this.gameLoop()
-    //         }
-    //     })
-    // }
+    // let count = 0;
+      for (let projectile of this.projectiles)
+      {
+          projectile.loaded(() => {
+             this.gameLoop()
+          })
+      }
 
-    // console.log('this.projectile :', this.projectile);
-    this.projectile.loaded(() => {
-      console.log('LOADED');
-      this.gameLoop();
-    });
+    // this.projectile.loaded(() => {
+    //   this.gameLoop();
+    // });
     this.player.loaded(() => {
       this.gameLoop();
     });
