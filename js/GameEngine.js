@@ -25,7 +25,7 @@ class GameEngine {
     this.ctx = this.canvas.getContext("2d");
     this.canvas.width = innerWidth;
     this.canvas.height = innerHeight;
-    this.player = new Player(this.canvas.width / 2.5, this.canvas.height);
+    this.player = new Player(this.canvas.width , this.canvas.height-100);
     this.invader = new Invaders();
     //  this.Player = new Drawable('asset/police_car.png',  300, 500)
   }
@@ -110,29 +110,29 @@ class GameEngine {
       this.player.x += this.speed;
     }
 
-    // if (this.collisionItem()) {
-    //     this.player.x = prevX
-    //     this.player.y = prevY
-    // }
+    if (this.collisionItem()) {
+        this.player.x = prevX
+        this.player.y = prevY
+    }
 
     this.collisionBorder();
     this.moveInvaders();
   }
 
-//   collisionItem() {
-//       for (let invader of this.items)
-//       {
-//           if (
-//               this.player.x < invader.getImg().width + invader.x
-//               && this.player.x + this.player.getImg().width > invader.x
-//               && this.player.y < invader.getImg().height + invader.y
-//               && this.player.y + this.player.getImg().height > invader.y
-//           ) {
-//              console.log("TOUCHÉ")
-//           }
-//       }
-//       console.log( "PAS TOUCHÉ")
-//   }
+  collisionItem() {
+      for (let invader of this.items)
+      {
+          if (
+              this.player.x < invader.getImg().width + invader.x
+              && this.player.x + this.player.getImg().width > invader.x
+              && this.player.y < invader.getImg().height + invader.y
+              && this.player.y + this.player.getImg().height > invader.y
+          ) {
+             console.log("TOUCHÉ")
+          }
+      }
+      console.log( "PAS TOUCHÉ")
+  }
 
   collisionBorder() {
     if (this.player.x < 0) {
@@ -144,9 +144,9 @@ class GameEngine {
     if (this.player.x + this.player.img.width > this.canvas.width) {
       this.player.x = this.canvas.width - this.player.img.width;
     }
-    if (this.player.y + this.player.img.height > this.canvas.height) {
-      this.player.y = this.canvas.height - this.player.img.height;
-    }
+    // if (this.player.y + this.player.img.height > this.canvas.height) {
+    //   this.player.y = this.canvas.height - this.player.img.height;
+    // }
   }
 
   draw() {
@@ -168,6 +168,7 @@ class GameEngine {
       this.player.width,
       this.player.height
     );
+    console.log(this.player.y)
   }
 
   gameLoop() {
