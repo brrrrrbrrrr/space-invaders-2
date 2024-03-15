@@ -14,7 +14,6 @@ class Invaders {
       this.height = 20;
       this.directionX = directionX;
       this.directionY = directionY;
-      this.countFrame = 0;
     }
   
     getImg() {

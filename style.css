@@ -3,3 +3,17 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+/* canvas {
+    position: fixed;
+    background: url("./assets/images/background.png") repeat 0 0;
+    width: 100vw;
+    height: 100vh;
+    animation: galaxy 10s linear infinite;
+}
+
+@keyframes galaxy {
+    from { background-position: 0 0 }
+    to {  background-position: 0 100vh }
+
+} */
