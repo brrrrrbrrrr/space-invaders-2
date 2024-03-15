@@ -9,7 +9,6 @@ class GameEngine {
   player = null;
   projectiles = [];
 
-
   keys = {
     up: false,
     down: false,
@@ -27,7 +26,10 @@ class GameEngine {
     this.canvas.width = innerWidth;
     this.canvas.height = innerHeight;
     this.player = new Player(this.canvas.width / 2.5, this.canvas.height);
-    this.projectile = new Projectile(this.player.x, this.player.y - this.player.img.width);
+    this.projectile = new Projectile(
+      this.player.x,
+      this.player.y - this.player.img.width
+    );
 
     // this.rateOfFire = 5;
     // this.shootCoolDown = 0;
@@ -66,6 +68,7 @@ class GameEngine {
           break;
         case ' ':
           this.keys.space = false;
+          this.projectiles.push(new Projectile(this.player.x, this.player.y));
           break;
       }
     });
@@ -84,29 +87,36 @@ class GameEngine {
   // }
 
   update() {
-      let prevX = this.player.x;
-      let prevY = this.player.y;
+    let prevX = this.player.x;
+    let prevY = this.player.y;
 
-      if (this.keys.left) {
-          this.player.x -= this.speed;
+    if (this.keys.left) {
+      this.player.x -= this.speed;
+    }
+    if (this.keys.right) {
+      this.player.x += this.speed;
+    }
+    if (this.keys.space) {
+      // setInterval(() => this.timeCycle(), 50);
+
+      if (this.keys.left || this.keys.right) {
       }
-      if (this.keys.right) {
-          this.player.x += this.speed;
-      }
-      if (this.keys.space) {
-          // setInterval(() => this.timeCycle(), 50);
-          this.projectiles.push(new Projectile(this.projectile.x, this.projectile.y += this.velocity));
-          if (this.keys.left || this.keys.right) {
+    }
 
-          }
-      }
+    this.projectiles = this.projectiles.filter(
+      (projectile) => projectile.y > 0
+    );
+    console.log(this.projectiles);
+    for (let projectile of this.projectiles) {
+      projectile.y -= 1;
+    }
 
-      // if (this.collisionItem()) {
-      //     this.player.x = prevX
-      //     this.player.y = prevY
-      // }
+    // if (this.collisionItem()) {
+    //     this.player.x = prevX
+    //     this.player.y = prevY
+    // }
 
-      this.collisionBorder();
+    this.collisionBorder();
   }
 
   // collisionItem() {
@@ -141,15 +151,10 @@ class GameEngine {
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    for (let projectile of this.projectiles) {
+    this.projectiles.forEach((projectile) => {
       this.ctx.drawImage(projectile.getImg(), projectile.x, projectile.y);
-    }
+    });
     this.ctx.drawImage(this.player.getImg(), this.player.x, this.player.y);
-    // this.ctx.drawImage(
-    //   this.projectile.getImg(),
-    //   this.projectile.x,
-    //   this.projectile.y
-    // );
   }
 
   gameLoop() {
@@ -162,13 +167,14 @@ class GameEngine {
 
   run() {
     this.init();
-    // let count = 0;
-      for (let projectile of this.projectiles)
-      {
-          projectile.loaded(() => {
-             this.gameLoop()
-          })
-      }
+    /* let count = 0;
+    for (let projectile of this.projectiles) {
+      
+      
+      projectile.loaded(() => {
+          this.gameLoop();
+      });
+    }*/
 
     // this.projectile.loaded(() => {
     //   this.gameLoop();
