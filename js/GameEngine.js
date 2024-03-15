@@ -35,7 +35,7 @@ class GameEngine {
   }
 
   generateInvaders() {
-    let count = 10;
+    let count = 20;
     let invaderHeight = this.invader.height;
     let espacement = invaderHeight * 2;
 
@@ -62,7 +62,7 @@ class GameEngine {
         if (invader.x <= 0 || invader.x + invader.width >= this.canvas.width) {
           invader.directionX *= -1;
         }
-// va permettre la collision de chaque élément du tableau
+        // va permettre la collision de chaque élément du tableau
         if (
           this.player.x < invader.x + invader.width &&
           this.player.x + this.player.width > invader.x &&
