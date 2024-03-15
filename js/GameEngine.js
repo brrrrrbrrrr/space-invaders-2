@@ -26,10 +26,6 @@ class GameEngine {
     this.canvas.width = innerWidth;
     this.canvas.height = innerHeight;
     this.player = new Player(this.canvas.width / 2.5, this.canvas.height);
-    this.projectile = new Projectile(
-      this.player.x,
-      this.player.y - this.player.img.width
-    );
 
     // this.rateOfFire = 5;
     // this.shootCoolDown = 0;
@@ -106,7 +102,7 @@ class GameEngine {
     this.projectiles = this.projectiles.filter(
       (projectile) => projectile.y > 0
     );
-    console.log(this.projectiles);
+
     for (let projectile of this.projectiles) {
       projectile.y -= 1;
     }
