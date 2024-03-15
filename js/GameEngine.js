@@ -105,7 +105,7 @@ class GameEngine {
     }
 
     this.projectiles = this.projectiles.filter(
-      (projectile) => projectile.y > 0
+      (projectile) => projectile.y + projectile.getImg().height > 0
     );
 
     // Pour chaque projectiles, on initialive correctement les valeurs pour que le point de depart soit le milieu du vaisseau
