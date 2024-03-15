@@ -67,6 +67,9 @@ class GameEngine {
         case ' ':
           this.keys.space = false;
           this.projectiles.push(new Projectile(this.player.x, this.player.y));
+          this.projectiles.map((item) => {
+            console.log('item', item);
+          });
           break;
       }
     });
@@ -105,8 +108,13 @@ class GameEngine {
       (projectile) => projectile.y > 0
     );
 
+    // Pour chaque projectiles, on initialive correctement les valeurs pour que le point de depart soit le milieu du vaisseau
     for (let projectile of this.projectiles) {
-      projectile.y -= 1;
+      (projectile.x =
+        this.player.x +
+        this.player.getImg().width / 2 -
+        projectile.getImg().width / 2),
+        (projectile.y -= 1);
     }
 
     // if (this.collisionItem()) {
