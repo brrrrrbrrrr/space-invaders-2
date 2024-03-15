@@ -3,9 +3,9 @@ class Player {
   x = 0;
   y = 0;
 
-  constructor(x, y) {
+  constructor(x = 0, y = 0) {
     this.img = new Image();
-    this.img.src = "./assets/images/space-ship.png";
+    this.img.src = './assets/images/space-ship.png';
     this.x = x;
     this.y = y;
     this.countFrame = 0;

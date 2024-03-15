@@ -25,7 +25,9 @@ class GameEngine {
     this.ctx = this.canvas.getContext('2d');
     this.canvas.width = innerWidth;
     this.canvas.height = innerHeight;
-    this.player = new Player(this.canvas.width / 2.5, this.canvas.height);
+    this.player = new Player();
+    this.player.x = this.canvas.width / 2 - this.player.getImg().width / 2;
+    this.player.y = this.canvas.height - this.player.getImg().height;
 
     // this.rateOfFire = 5;
     // this.shootCoolDown = 0;
