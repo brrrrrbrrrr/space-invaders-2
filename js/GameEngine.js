@@ -57,6 +57,17 @@ class GameEngine {
       this.items.push(newInvader);
     }
   }
+  moveInvaders() {
+    for (let invader of this.items) {
+      invader.x += invader.directionX * this.invadersSpeed;
+      invader.y += invader.directionY * this.invadersSpeed/3;
+
+      //  collisions gauche et droite
+      if (invader.x <= 0 || invader.x + invader.width >= this.canvas.width) {
+        invader.directionX *= -1;// bug anormal si valeur au delaà de 1 ou -1
+      }
+    }
+  }
 
  
 
@@ -108,20 +119,20 @@ class GameEngine {
     this.moveInvaders();
   }
 
-  // collisionItem() {
-  //     for (let item of this.items)
-  //     {
-  //         if (
-  //             this.player.x < item.getImg().width + item.x
-  //             && this.player.x + this.player.getImg().width > item.x
-  //             && this.player.y < item.getImg().height + item.y
-  //             && this.player.y + this.player.getImg().height > item.y
-  //         ) {
-  //             return true
-  //         }
-  //     }
-  //     return false
-  // }
+//   collisionItem() {
+//       for (let invader of this.items)
+//       {
+//           if (
+//               this.player.x < invader.getImg().width + invader.x
+//               && this.player.x + this.player.getImg().width > invader.x
+//               && this.player.y < invader.getImg().height + invader.y
+//               && this.player.y + this.player.getImg().height > invader.y
+//           ) {
+//              console.log("TOUCHÉ")
+//           }
+//       }
+//       console.log( "PAS TOUCHÉ")
+//   }
 
   collisionBorder() {
     if (this.player.x < 0) {
