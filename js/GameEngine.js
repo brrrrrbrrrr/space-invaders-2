@@ -1,5 +1,6 @@
 import { Player } from "./Player.js";
 import { Invaders } from "./Invaders.js";
+import { collision } from "./Collision.js";
 
 class GameEngine {
   canvas = null;
@@ -7,7 +8,7 @@ class GameEngine {
   items = [];
   player = null;
   invader = null;
-  collision = false;
+  hasCollision = false;
 
   keys = {
     up: false,
@@ -53,7 +54,7 @@ class GameEngine {
   moveInvaders() {
     for (let invader of this.items) {
       // vérif si il y a collision par défaut collision=false
-      if (!invader.collision) {
+      if (!invader.hasCollision) {
         // permet d'établir la vitesse de déplacement horizontale
         invader.x += invader.directionX * this.invadersSpeed;
         // permet d'établir la vitesse de descente verticale
@@ -63,14 +64,9 @@ class GameEngine {
           invader.directionX *= -1;
         }
         // va permettre la collision de chaque élément du tableau
-        if (
-          this.player.x < invader.x + invader.width &&
-          this.player.x + this.player.width > invader.x &&
-          this.player.y < invader.y + invader.height &&
-          this.player.y + this.player.height > invader.y
-        ) {
-          invader.collision = true;
-          this.collision = true;
+        if (collision(this.player, invader)) {
+          invader.hasCollision = true;
+          this.hasCollision = true;
         }
       }
     }
