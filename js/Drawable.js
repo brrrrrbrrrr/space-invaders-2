@@ -25,6 +25,7 @@ class Drawable {
     loaded(callback) {
       let count = 0;
       for (let image of this.images) {
+       
         image.onload = () => {
           if (++count === this.images.length) {
             callback();

@@ -19,7 +19,7 @@ class GameEngine {
   };
 
   speed = 5;
-  invadersSpeed = 3;
+  invadersSpeed = 6;
 
   constructor() {
     this.canvas = document.getElementById("game");
@@ -62,6 +62,11 @@ class GameEngine {
         // vérif si les bords sont touchés si oui la direction du déplacement est inversée avec *-1
         if (invader.x <= 0 || invader.x + invader.width >= this.canvas.width) {
           invader.directionX *= -1;
+        }
+        if (invader.y + invader.height > this.canvas.height) {
+          invader.y = this.canvas.height - invader.height;
+          this.invadersSpeed=0;
+          this.gameOver();
         }
         // va permettre la collision de chaque élément du tableau
         if (collision(this.player, invader)) {
@@ -158,6 +163,18 @@ class GameEngine {
     this.init();
     this.gameLoop();
   }
+
+
+  gameOver() {
+    document.getElementById('titleMenu').innerText = 'GAME OVER'
+    document.getElementById('contentMenu').innerText = 'La Terre a été envahie !!!'
+    document.getElementById('startBtn').innerText = 'Restart the Game'
+  
+    document.getElementById('menu').style = 'display: flex'
+  }
 }
+
+
+
 
 export { GameEngine };
