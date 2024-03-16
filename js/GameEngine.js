@@ -66,14 +66,24 @@ class GameEngine {
           break;
         case ' ':
           this.keys.space = false;
-          this.projectiles.push(new Projectile(this.player.x, this.player.y));
-          this.projectiles.map((item) => {
-            console.log('item', item);
-          });
+          this.newProjectile();
           break;
       }
     });
   }
+
+  newProjectile = () => {
+    const projectile = new Projectile(null, null);
+
+    // Pour chaque projectiles, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
+    projectile.x =
+      this.player.x +
+      this.player.getImg().width / 2 -
+      projectile.getImg().width / 2;
+
+    projectile.y = this.player.y;
+    this.projectiles.push(projectile);
+  };
 
   // timeCycle() {
   //     if (this.keys.space === true) {
@@ -97,24 +107,12 @@ class GameEngine {
     if (this.keys.right) {
       this.player.x += this.speed;
     }
-    if (this.keys.space) {
-      // setInterval(() => this.timeCycle(), 50);
-
-      if (this.keys.left || this.keys.right) {
-      }
-    }
 
     this.projectiles = this.projectiles.filter(
       (projectile) => projectile.y + projectile.getImg().height > 0
     );
-
-    // Pour chaque projectiles, on initialive correctement les valeurs pour que le point de depart soit le milieu du vaisseau
     for (let projectile of this.projectiles) {
-      (projectile.x =
-        this.player.x +
-        this.player.getImg().width / 2 -
-        projectile.getImg().width / 2),
-        (projectile.y -= 1);
+      projectile.y -= 1;
     }
 
     // if (this.collisionItem()) {
@@ -157,6 +155,10 @@ class GameEngine {
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.drawNewProjectile();
+  }
+
+  drawNewProjectile() {
     this.projectiles.forEach((projectile) => {
       this.ctx.drawImage(projectile.getImg(), projectile.x, projectile.y);
     });

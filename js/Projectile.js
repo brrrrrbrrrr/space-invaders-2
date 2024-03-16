@@ -5,13 +5,6 @@ class Projectile extends Drawable {
     super('./assets/images/laser-blue.png', x, y);
     this.countFrame = 0;
   }
-
-  // getImg() {
-  //   if (++this.countFrame === 10) {
-  //       this.countFrame = 0
-  //   }
-  //   return this.img;
-  // }
 }
 
 export { Projectile };
