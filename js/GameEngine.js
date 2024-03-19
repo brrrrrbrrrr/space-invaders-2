@@ -11,6 +11,7 @@ class GameEngine {
   invader = null;
   hasCollision = false;
   projectiles = [];
+  level = null;
 
   keys = {
     up: false,
@@ -34,9 +35,11 @@ class GameEngine {
     this.player = new Player();
     this.player.x = this.canvas.width / 2 - this.player.getImg().width / 2;
     this.player.y = this.canvas.height - this.player.getImg().height;
+    this.level = 1;
   }
 
   init() {
+    this.currentLevel = true;
     this.initEvent();
     this.generateInvaders();
   }
@@ -81,6 +84,15 @@ class GameEngine {
         }
       }
     }
+  }
+
+  //Création d'une fonction nextLevel qui aura le comportement suivant si elle est call
+  nextLevel() {
+    document.getElementById('titleMenu').innerText = 'BRAVO';
+    document.getElementById('contentMenu').innerText =
+      'Vous avez tué tous les envahisseurs !!!';
+    document.getElementById('startBtn').innerText = 'Niveau suivant';
+    document.getElementById('menu').style = 'display: flex';
   }
 
   initEvent() {
@@ -137,6 +149,7 @@ class GameEngine {
   };
 
   update() {
+    console.log('LEVEL :', this.level);
     let prevX = this.player.x;
     let prevY = this.player.y;
 
@@ -167,6 +180,12 @@ class GameEngine {
     if (this.moveInvaders()) {
       this.player.x = prevX;
       this.player.y = prevY;
+    }
+
+    //Si mon tableau d'envahisseur est vide, je passe au niveau suivant
+    if (this.items.length === 0) {
+      this.currentLevel = false;
+      this.nextLevel();
     }
   }
 
@@ -224,18 +243,7 @@ class GameEngine {
     document.getElementById('startBtn').innerText = 'Restart the Game';
 
     document.getElementById('menu').style = 'display: flex';
-    /* let count = 0;
-    for (let projectile of this.projectiles) {
-      
-      
-      projectile.loaded(() => {
-          this.gameLoop();
-      });
-    }*/
 
-    // this.projectile.loaded(() => {
-    //   this.gameLoop();
-    // });
     this.player.loaded(() => {
       this.gameLoop();
     });
