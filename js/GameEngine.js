@@ -18,6 +18,7 @@ class GameEngine {
     left: false,
     right: false,
     space: false,
+    p: false,
   };
 
   speed = 5;
@@ -94,9 +95,13 @@ class GameEngine {
         case ' ':
           this.keys.space = true;
           break;
+        //Ajout d'une touche pour supprimer tous les invaders, pour tester le niveau suivant
+        case 'p':
+          this.keys.p = true;
+          break;
       }
     });
-
+    console.log('INVADERS :', this.items);
     window.addEventListener('keyup', (event) => {
       switch (event.key) {
         case 'ArrowLeft':
@@ -108,6 +113,10 @@ class GameEngine {
         case ' ':
           this.keys.space = false;
           this.newProjectile();
+          break;
+        //Ajout d'une touche pour supprimer tous les invaders, pour tester le niveau suivant
+        case 'p':
+          this.keys.p = false;
           break;
       }
     });
@@ -143,6 +152,10 @@ class GameEngine {
     );
     for (let projectile of this.projectiles) {
       projectile.y -= 1;
+    }
+    if (this.keys.p) {
+      this.items = [];
+      console.log('THIS ITEMS DELETE :', this.items);
     }
 
     // if (this.collisionItem()) {
