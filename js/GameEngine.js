@@ -2,8 +2,7 @@ import { Player } from './Player.js';
 import { Invaders } from './Invaders.js';
 import { collision } from './Collision.js';
 import { Projectile } from './Projectile.js';
-import {InvaderProjectile} from './InvaderProjectile.js'
-
+import { InvaderProjectile } from './InvaderProjectile.js';
 
 class GameEngine {
   canvas = null;
@@ -13,7 +12,9 @@ class GameEngine {
   invader = null;
   hasCollision = false;
   projectiles = [];
-  invaderProjectiles = []; //Liste de projectiles des invaders
+  invaderProjectiles = [];
+  //Liste de projectiles des invaders
+  intervalId = null;
 
   keys = {
     up: false,
@@ -42,7 +43,6 @@ class GameEngine {
     this.initEvent();
     this.generateInvaders();
     this.generateInvadersProjectiles();
-   
   }
 
   generateInvaders() {
@@ -87,7 +87,6 @@ class GameEngine {
     }
   }
 
-  
   initEvent() {
     window.addEventListener('keydown', (event) => {
       switch (event.key) {
@@ -164,26 +163,24 @@ class GameEngine {
   // };
 
   generateInvadersProjectiles = () => {
+  this.intervalId = setInterval(() => {
+      for (let invader of this.items) {
+        const invaderProjectile = new InvaderProjectile(
+          invader.x,
+          invader.y,
+          5,
+          -100,
+          invader.getImg().width / 2
+        );
 
-    
-    setInterval(() => {
-      
-       for (let invader of this.items) {
-         const invaderProjectile = new InvaderProjectile(
-           invader.x,
-           invader.y,
-           5,
-           -100,
-           invader.getImg().width / 2
-         );
+        console.log(invaderProjectile, 'invaderProjectile');
 
-         console.log(invaderProjectile, 'invaderProjectile');
-
-         this.invaderProjectiles.push(invaderProjectile);
-       }
-    },1000)
-   
+        this.invaderProjectiles.push(invaderProjectile);
+      }
+    }, 1000);
   };
+
+
 
   update() {
     let prevX = this.player.x;
@@ -283,6 +280,7 @@ class GameEngine {
   }
 
   gameOver() {
+    clearInterval(this.intervalId);
     document.getElementById('titleMenu').innerText = 'GAME OVER';
     document.getElementById('contentMenu').innerText =
       'La Terre a été envahie !!!';
