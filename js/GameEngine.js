@@ -1,6 +1,6 @@
-import { Player } from "./Player.js";
-import { Invaders } from "./Invaders.js";
-import { collision } from "./Collision.js";
+import { Player } from './Player.js';
+import { Invaders } from './Invaders.js';
+import { collision } from './Collision.js';
 import { Projectile } from './Projectile.js';
 
 class GameEngine {
@@ -70,7 +70,7 @@ class GameEngine {
         }
         if (invader.y + invader.height > this.canvas.height) {
           invader.y = this.canvas.height - invader.height;
-          this.invadersSpeed=0;
+          this.invadersSpeed = 0;
           this.gameOver();
         }
         // va permettre la collision de chaque élément du tableau
@@ -115,6 +115,7 @@ class GameEngine {
 
   newProjectile = () => {
     const projectile = new Projectile(null, null);
+    console.log('projectile : ', projectile);
 
     // Pour chaque projectiles, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
     projectile.x =
@@ -179,13 +180,7 @@ class GameEngine {
         item.height
       );
     }
-    this.ctx.drawImage(
-      this.player.getImg(),
-      this.player.x,
-      this.player.y,
-      this.player.width,
-      this.player.height
-    );
+
     this.drawNewProjectile();
   }
 
@@ -193,6 +188,7 @@ class GameEngine {
     this.projectiles.forEach((projectile) => {
       this.ctx.drawImage(projectile.getImg(), projectile.x, projectile.y);
     });
+    this.ctx.drawImage(this.player.getImg(), this.player.x, this.player.y);
   }
 
   gameLoop() {
@@ -208,13 +204,13 @@ class GameEngine {
     this.gameLoop();
   }
 
-
   gameOver() {
-    document.getElementById('titleMenu').innerText = 'GAME OVER'
-    document.getElementById('contentMenu').innerText = 'La Terre a été envahie !!!'
-    document.getElementById('startBtn').innerText = 'Restart the Game'
-  
-    document.getElementById('menu').style = 'display: flex'
+    document.getElementById('titleMenu').innerText = 'GAME OVER';
+    document.getElementById('contentMenu').innerText =
+      'La Terre a été envahie !!!';
+    document.getElementById('startBtn').innerText = 'Restart the Game';
+
+    document.getElementById('menu').style = 'display: flex';
     /* let count = 0;
     for (let projectile of this.projectiles) {
       
@@ -232,8 +228,5 @@ class GameEngine {
     });
   }
 }
-
-
-
 
 export { GameEngine };
