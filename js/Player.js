@@ -11,6 +11,7 @@ class Player {
     this.width= 100;
     this.height= 100;
     this.countFrame = 0;
+    this.lives = 3;
   }
 
   getImg() {

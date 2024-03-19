@@ -75,8 +75,15 @@ class GameEngine {
         }
         // va permettre la collision de chaque élément du tableau
         if (collision(this.player, invader)) {
-          invader.hasCollision = true;
-          this.hasCollision = true;
+          if (this.player.lives > 0) {
+            invader.hasCollision = true;
+            this.hasCollision = true;
+            --this.player.lives;
+          } else {
+            this.gameOver();
+            invader.hasCollision = false;
+            this.hasCollision = false;
+          }
         }
       }
     }
@@ -115,7 +122,6 @@ class GameEngine {
 
   newProjectile = () => {
     const projectile = new Projectile(null, null);
-    console.log('projectile : ', projectile);
 
     // Pour chaque projectiles, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
     projectile.x =
@@ -125,6 +131,19 @@ class GameEngine {
 
     projectile.y = this.player.y;
     this.projectiles.push(projectile);
+
+    // Check for collision with player
+    if (collision(this.player, projectile)) {
+      if (this.player.lives > 0) {
+        projectile.hasCollision = true;
+        this.hasCollision = true;
+        --this.player.lives;
+      } else {
+        this.gameOver();
+        projectile.hasCollision = false;
+        this.hasCollision = false;
+      }
+    }
   };
 
   update() {
@@ -180,8 +199,8 @@ class GameEngine {
         item.height
       );
     }
-
     this.drawNewProjectile();
+    this.drawLives();
   }
 
   drawNewProjectile() {
@@ -189,6 +208,11 @@ class GameEngine {
       this.ctx.drawImage(projectile.getImg(), projectile.x, projectile.y);
     });
     this.ctx.drawImage(this.player.getImg(), this.player.x, this.player.y);
+  }
+
+  drawLives() {
+    this.ctx.font = '20px Arial';
+    this.ctx.fillText(`Lives: ${this.player.lives}`, 10, 30);
   }
 
   gameLoop() {
@@ -202,6 +226,19 @@ class GameEngine {
   run() {
     this.init();
     this.gameLoop();
+    // let count = 0;
+    // for (let projectile of this.projectiles) {
+    //   projectile.loaded(() => {
+    //       this.gameLoop();
+    //   });
+    // }
+
+    // this.projectile.loaded(() => {
+    //   this.gameLoop();
+    // });
+    // this.player.loaded(() => {
+    //   this.gameLoop();
+    // });
   }
 
   gameOver() {
@@ -209,23 +246,7 @@ class GameEngine {
     document.getElementById('contentMenu').innerText =
       'La Terre a été envahie !!!';
     document.getElementById('startBtn').innerText = 'Restart the Game';
-
     document.getElementById('menu').style = 'display: flex';
-    /* let count = 0;
-    for (let projectile of this.projectiles) {
-      
-      
-      projectile.loaded(() => {
-          this.gameLoop();
-      });
-    }*/
-
-    // this.projectile.loaded(() => {
-    //   this.gameLoop();
-    // });
-    this.player.loaded(() => {
-      this.gameLoop();
-    });
   }
 }
 
