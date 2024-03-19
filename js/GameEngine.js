@@ -1,6 +1,7 @@
 import { Player } from "./Player.js";
 import { Invaders } from "./Invaders.js";
 import { collision } from "./Collision.js";
+import { Projectile } from './Projectile.js';
 
 class GameEngine {
   canvas = null;
@@ -9,6 +10,7 @@ class GameEngine {
   player = null;
   invader = null;
   hasCollision = false;
+  projectiles = [];
 
   keys = {
     up: false,
@@ -20,14 +22,17 @@ class GameEngine {
 
   speed = 5;
   invadersSpeed = 6;
+  velocity = -10;
 
   constructor() {
-    this.canvas = document.getElementById("game");
-    this.ctx = this.canvas.getContext("2d");
+    this.canvas = document.getElementById('game');
+    this.ctx = this.canvas.getContext('2d');
     this.canvas.width = innerWidth;
     this.canvas.height = innerHeight;
-    this.player = new Player(this.canvas.width, this.canvas.height - 100);
     this.invader = new Invaders();
+    this.player = new Player();
+    this.player.x = this.canvas.width / 2 - this.player.getImg().width / 2;
+    this.player.y = this.canvas.height - this.player.getImg().height;
   }
 
   init() {
@@ -78,28 +83,48 @@ class GameEngine {
   }
 
   initEvent() {
-    window.addEventListener("keydown", (event) => {
+    window.addEventListener('keydown', (event) => {
       switch (event.key) {
-        case "ArrowLeft":
+        case 'ArrowLeft':
           this.keys.left = true;
           break;
-        case "ArrowRight":
+        case 'ArrowRight':
           this.keys.right = true;
+          break;
+        case ' ':
+          this.keys.space = true;
           break;
       }
     });
 
-    window.addEventListener("keyup", (event) => {
+    window.addEventListener('keyup', (event) => {
       switch (event.key) {
-        case "ArrowLeft":
+        case 'ArrowLeft':
           this.keys.left = false;
           break;
-        case "ArrowRight":
+        case 'ArrowRight':
           this.keys.right = false;
+          break;
+        case ' ':
+          this.keys.space = false;
+          this.newProjectile();
           break;
       }
     });
   }
+
+  newProjectile = () => {
+    const projectile = new Projectile(null, null);
+
+    // Pour chaque projectiles, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
+    projectile.x =
+      this.player.x +
+      this.player.getImg().width / 2 -
+      projectile.getImg().width / 2;
+
+    projectile.y = this.player.y;
+    this.projectiles.push(projectile);
+  };
 
   update() {
     let prevX = this.player.x;
@@ -111,6 +136,18 @@ class GameEngine {
     if (this.keys.right) {
       this.player.x += this.speed;
     }
+
+    this.projectiles = this.projectiles.filter(
+      (projectile) => projectile.y + projectile.getImg().height > 0
+    );
+    for (let projectile of this.projectiles) {
+      projectile.y -= 1;
+    }
+
+    // if (this.collisionItem()) {
+    //     this.player.x = prevX
+    //     this.player.y = prevY
+    // }
 
     this.collisionBorder();
     if (this.moveInvaders()) {
@@ -149,6 +186,13 @@ class GameEngine {
       this.player.width,
       this.player.height
     );
+    this.drawNewProjectile();
+  }
+
+  drawNewProjectile() {
+    this.projectiles.forEach((projectile) => {
+      this.ctx.drawImage(projectile.getImg(), projectile.x, projectile.y);
+    });
   }
 
   gameLoop() {
@@ -171,6 +215,21 @@ class GameEngine {
     document.getElementById('startBtn').innerText = 'Restart the Game'
   
     document.getElementById('menu').style = 'display: flex'
+    /* let count = 0;
+    for (let projectile of this.projectiles) {
+      
+      
+      projectile.loaded(() => {
+          this.gameLoop();
+      });
+    }*/
+
+    // this.projectile.loaded(() => {
+    //   this.gameLoop();
+    // });
+    this.player.loaded(() => {
+      this.gameLoop();
+    });
   }
 }
 
