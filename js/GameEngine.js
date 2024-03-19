@@ -2,6 +2,8 @@ import { Player } from './Player.js';
 import { Invaders } from './Invaders.js';
 import { collision } from './Collision.js';
 import { Projectile } from './Projectile.js';
+import {InvaderProjectile} from './InvaderProjectile.js'
+
 
 class GameEngine {
   canvas = null;
@@ -11,6 +13,7 @@ class GameEngine {
   invader = null;
   hasCollision = false;
   projectiles = [];
+  invaderProjectiles = []; //Liste de projectiles des invaders
 
   keys = {
     up: false,
@@ -109,6 +112,10 @@ class GameEngine {
           this.keys.space = false;
           this.newProjectile();
           break;
+        case 'ArrowUp':
+          this.keys.space = false;
+          this.generateInvadersProjectiles();
+          break;
       }
     });
   }
@@ -127,6 +134,46 @@ class GameEngine {
     this.projectiles.push(projectile);
   };
 
+  // generateInvadersProjectiles = () => {
+  //   const invaderProjectile = new Projectile(null, null);
+  //   console.log(invaderProjectile,"invaderProjectile");
+
+  //   for (let invader of this.items) {
+  //     invaderProjectile.x =
+  //       invader.x + invader.getImg().width / 2 - invader.getImg().width / 2;
+  //     console.log(invaderProjectile.x, 'test');
+
+  //     invader.y = this.player.y;
+  //    this.invaderProjectiles.push(invaderProjectile);
+  //   }
+  // };
+
+  // generateInvadersProjectiles = () => {
+  //   for (let invader of this.items) {
+  //     const invaderProjectile = new InvaderProjectile(
+  //       invader.x, invader.y, invader.getImg().width/2,
+
+  //     );
+  //     console.log(invaderProjectile, 'invaderProjectile');
+
+  //     this.invaderProjectiles.push(invaderProjectile);
+  //   }
+  // };
+
+  generateInvadersProjectiles = () => {
+    for (let invader of this.items) {
+      const invaderProjectile = new InvaderProjectile(
+        invader.x, invader.y,5,-100,invader.getImg().width/2,
+
+      );
+      console.log(invaderProjectile, 'invaderProjectile');
+
+      this.invaderProjectiles.push(invaderProjectile);
+    }
+  };
+
+  
+
   update() {
     let prevX = this.player.x;
     let prevY = this.player.y;
@@ -143,6 +190,15 @@ class GameEngine {
     );
     for (let projectile of this.projectiles) {
       projectile.y -= 1;
+    }
+
+    this.invaderProjectiles = this.invaderProjectiles.filter(
+      (invaderProjectile) =>
+        invaderProjectile.y + invaderProjectile.getImg().height > 0
+    );
+    for (let invaderProjectile of this.invaderProjectiles) {
+      
+      invaderProjectile.y += 9;
     }
 
     // if (this.collisionItem()) {
@@ -182,6 +238,7 @@ class GameEngine {
     }
 
     this.drawNewProjectile();
+    this.drawInvaderProjectile();
   }
 
   drawNewProjectile() {
@@ -189,6 +246,17 @@ class GameEngine {
       this.ctx.drawImage(projectile.getImg(), projectile.x, projectile.y);
     });
     this.ctx.drawImage(this.player.getImg(), this.player.x, this.player.y);
+  }
+
+  drawInvaderProjectile() {
+    this.invaderProjectiles.forEach((invaderProjectile) => {
+      this.ctx.drawImage(
+        invaderProjectile.getImg(),
+        invaderProjectile.x,
+        invaderProjectile.y
+      );
+    });
+    //   this.ctx.drawImage(this.player.getImg(), this.player.x, this.player.y);
   }
 
   gameLoop() {
