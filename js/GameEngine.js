@@ -1,11 +1,12 @@
-// import { Drawable } from "./Drawable.js";
-import { Player } from "./Player.js";
+import { Player } from './Player.js';
+import { Projectile } from './Projectile.js';
 
 class GameEngine {
   canvas = null;
   ctx = null;
   items = [];
   player = null;
+  projectiles = [];
 
   keys = {
     up: false,
@@ -16,50 +17,69 @@ class GameEngine {
   };
 
   speed = 5;
+  velocity = -10;
 
   constructor() {
-    this.canvas = document.getElementById("game");
-    this.ctx = this.canvas.getContext("2d");
+    this.canvas = document.getElementById('game');
+    this.ctx = this.canvas.getContext('2d');
     this.canvas.width = innerWidth;
-    this.canvas.height = innerHeight ;
-    this.player = new Player((this.canvas.width / 2.5), this.canvas.height);
-    //  this.Player = new Drawable('asset/police_car.png',  300, 500)
+    this.canvas.height = innerHeight;
+    this.player = new Player();
+    this.player.x = this.canvas.width / 2 - this.player.getImg().width / 2;
+    this.player.y = this.canvas.height - this.player.getImg().height;
   }
 
   init() {
     this.initEvent();
+
     // this.items = [
     //     new Player( 200, 200),
     // ]
   }
 
   initEvent() {
-    window.addEventListener("keydown", (event) => {
+    window.addEventListener('keydown', (event) => {
       switch (event.key) {
-        case "ArrowLeft":
+        case 'ArrowLeft':
           this.keys.left = true;
           break;
-        case "ArrowRight":
+        case 'ArrowRight':
           this.keys.right = true;
           break;
-        // case ' ':
-        //     break;
+        case ' ':
+          this.keys.space = true;
+          break;
       }
     });
 
-    window.addEventListener("keyup", (event) => {
+    window.addEventListener('keyup', (event) => {
       switch (event.key) {
-        case "ArrowLeft":
+        case 'ArrowLeft':
           this.keys.left = false;
           break;
-        case "ArrowRight":
+        case 'ArrowRight':
           this.keys.right = false;
           break;
-        // case ' ':
-        //     break;
+        case ' ':
+          this.keys.space = false;
+          this.newProjectile();
+          break;
       }
     });
   }
+
+  newProjectile = () => {
+    const projectile = new Projectile(null, null);
+
+    // Pour chaque projectiles, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
+    projectile.x =
+      this.player.x +
+      this.player.getImg().width / 2 -
+      projectile.getImg().width / 2;
+
+    projectile.y = this.player.y;
+    this.projectiles.push(projectile);
+  };
 
   update() {
     let prevX = this.player.x;
@@ -70,6 +90,13 @@ class GameEngine {
     }
     if (this.keys.right) {
       this.player.x += this.speed;
+    }
+
+    this.projectiles = this.projectiles.filter(
+      (projectile) => projectile.y + projectile.getImg().height > 0
+    );
+    for (let projectile of this.projectiles) {
+      projectile.y -= 1;
     }
 
     // if (this.collisionItem()) {
@@ -112,10 +139,13 @@ class GameEngine {
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    // for (let item of this.items)
-    // {
-    //     this.ctx.drawImage(item.getImg(), item.x, item.y)
-    // }
+    this.drawNewProjectile();
+  }
+
+  drawNewProjectile() {
+    this.projectiles.forEach((projectile) => {
+      this.ctx.drawImage(projectile.getImg(), projectile.x, projectile.y);
+    });
     this.ctx.drawImage(this.player.getImg(), this.player.x, this.player.y);
   }
 
@@ -129,16 +159,18 @@ class GameEngine {
 
   run() {
     this.init();
-    let count = 0;
-    // for (let item of this.items)
-    // {
-    //     item.loaded(() => {
-    //         console.log(item)
-    //         if (++count === this.items.length) {
-    //             this.gameLoop()
-    //         }
-    //     })
-    // }
+    /* let count = 0;
+    for (let projectile of this.projectiles) {
+      
+      
+      projectile.loaded(() => {
+          this.gameLoop();
+      });
+    }*/
+
+    // this.projectile.loaded(() => {
+    //   this.gameLoop();
+    // });
     this.player.loaded(() => {
       this.gameLoop();
     });
