@@ -12,6 +12,8 @@ class GameEngine {
   hasCollision = false;
   projectiles = [];
   level = null;
+  lastFrameTime = null;
+  fpsInterval = null;
 
   keys = {
     up: false,
@@ -36,6 +38,8 @@ class GameEngine {
     this.player.x = this.canvas.width / 2 - this.player.getImg().width / 2;
     this.player.y = this.canvas.height - this.player.getImg().height;
     this.level = 1;
+    this.lastFrameTime = performance.now();
+    this.fpsInterval = 1000 / 100; //
   }
 
   init() {
@@ -224,8 +228,15 @@ class GameEngine {
   }
 
   gameLoop() {
-    this.update();
-    this.draw();
+    const currentTime = performance.now(); // Le temps maintenant
+    const elapsed = currentTime - this.lastFrameTime; // Le temps ecoulé
+
+    if (elapsed > this.fpsInterval) {
+      // Mettre à jour le dernier temps de frame pour le prochain cycle
+      this.lastFrameTime = currentTime - (elapsed % this.fpsInterval);
+      this.update();
+      this.draw();
+    }
     window.requestAnimationFrame(() => {
       this.gameLoop();
     });
