@@ -41,6 +41,8 @@ class GameEngine {
   init() {
     this.initEvent();
     this.generateInvaders();
+    this.generateInvadersProjectiles();
+   
   }
 
   generateInvaders() {
@@ -85,6 +87,7 @@ class GameEngine {
     }
   }
 
+  
   initEvent() {
     window.addEventListener('keydown', (event) => {
       switch (event.key) {
@@ -112,10 +115,10 @@ class GameEngine {
           this.keys.space = false;
           this.newProjectile();
           break;
-        case 'ArrowUp':
-          this.keys.space = false;
-          this.generateInvadersProjectiles();
-          break;
+        // case 'ArrowUp':
+        //   this.keys.space = false;
+        //   this.generateInvadersProjectiles();
+        //   break;
       }
     });
   }
@@ -161,18 +164,26 @@ class GameEngine {
   // };
 
   generateInvadersProjectiles = () => {
-    for (let invader of this.items) {
-      const invaderProjectile = new InvaderProjectile(
-        invader.x, invader.y,5,-100,invader.getImg().width/2,
 
-      );
-      console.log(invaderProjectile, 'invaderProjectile');
+    
+    setInterval(() => {
+      
+       for (let invader of this.items) {
+         const invaderProjectile = new InvaderProjectile(
+           invader.x,
+           invader.y,
+           5,
+           -100,
+           invader.getImg().width / 2
+         );
 
-      this.invaderProjectiles.push(invaderProjectile);
-    }
+         console.log(invaderProjectile, 'invaderProjectile');
+
+         this.invaderProjectiles.push(invaderProjectile);
+       }
+    },1000)
+   
   };
-
-  
 
   update() {
     let prevX = this.player.x;
@@ -197,7 +208,6 @@ class GameEngine {
         invaderProjectile.y + invaderProjectile.getImg().height > 0
     );
     for (let invaderProjectile of this.invaderProjectiles) {
-      
       invaderProjectile.y += 9;
     }
 
