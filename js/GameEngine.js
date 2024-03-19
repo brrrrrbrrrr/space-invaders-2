@@ -1,4 +1,3 @@
-// import { Drawable } from "./Drawable.js";
 import { Player } from './Player.js';
 import { Projectile } from './Projectile.js';
 
@@ -28,9 +27,6 @@ class GameEngine {
     this.player = new Player();
     this.player.x = this.canvas.width / 2 - this.player.getImg().width / 2;
     this.player.y = this.canvas.height - this.player.getImg().height;
-
-    // this.rateOfFire = 5;
-    // this.shootCoolDown = 0;
   }
 
   init() {
@@ -84,18 +80,6 @@ class GameEngine {
     projectile.y = this.player.y;
     this.projectiles.push(projectile);
   };
-
-  // timeCycle() {
-  //     if (this.keys.space === true) {
-  //         if(this.shootCoolDown === 0){
-  //             this.shootCoolDown = this.rateOfFire;
-  //             this.projectiles.push(new Projectile(this.player.x, this.player.y));
-  //         }
-  //     }
-  //     if (this.shootCoolDown > 0){
-  //         this.shootCoolDown --;
-  //     }
-  // }
 
   update() {
     let prevX = this.player.x;
