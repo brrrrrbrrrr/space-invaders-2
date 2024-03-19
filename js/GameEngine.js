@@ -25,7 +25,7 @@ class GameEngine {
   };
 
   speed = 5;
-  invadersSpeed = 6;
+  invadersSpeed = 3;
   velocity = -10;
 
   constructor() {
@@ -114,10 +114,7 @@ class GameEngine {
           this.keys.space = false;
           this.newProjectile();
           break;
-        // case 'ArrowUp':
-        //   this.keys.space = false;
-        //   this.generateInvadersProjectiles();
-        //   break;
+      
       }
     });
   }
@@ -136,51 +133,42 @@ class GameEngine {
     this.projectiles.push(projectile);
   };
 
-  // generateInvadersProjectiles = () => {
-  //   const invaderProjectile = new Projectile(null, null);
-  //   console.log(invaderProjectile,"invaderProjectile");
-
-  //   for (let invader of this.items) {
-  //     invaderProjectile.x =
-  //       invader.x + invader.getImg().width / 2 - invader.getImg().width / 2;
-  //     console.log(invaderProjectile.x, 'test');
-
-  //     invader.y = this.player.y;
-  //    this.invaderProjectiles.push(invaderProjectile);
-  //   }
-  // };
 
   // generateInvadersProjectiles = () => {
-  //   for (let invader of this.items) {
-  //     const invaderProjectile = new InvaderProjectile(
-  //       invader.x, invader.y, invader.getImg().width/2,
+  // this.intervalId = setInterval(() => {
+  //     for (let invader of this.items) {
+  //       const invaderProjectile = new InvaderProjectile(
+  //         invader.x,
+  //         invader.y,
+  //         5,
+  //         -100,
+  //         invader.getImg().width / 2
+  //       );
 
-  //     );
-  //     console.log(invaderProjectile, 'invaderProjectile');
+  //       console.log(invaderProjectile, 'invaderProjectile');
 
-  //     this.invaderProjectiles.push(invaderProjectile);
-  //   }
+  //       this.invaderProjectiles.push(invaderProjectile);
+  //     }
+  //   }, 1000);
   // };
 
   generateInvadersProjectiles = () => {
-  this.intervalId = setInterval(() => {
-      for (let invader of this.items) {
+    this.intervalId = setInterval(() => {
+      const selectInvaders = Math.floor(Math.random() * this.items.length);
         const invaderProjectile = new InvaderProjectile(
-          invader.x,
-          invader.y,
+         this.items[selectInvaders].x,
+         this.items[selectInvaders].y,
           5,
           -100,
-          invader.getImg().width / 2
+         this.items[selectInvaders].getImg().width / 2
         );
-
-        console.log(invaderProjectile, 'invaderProjectile');
-
-        this.invaderProjectiles.push(invaderProjectile);
-      }
-    }, 1000);
+      this.invaderProjectiles.push(invaderProjectile);
+      console.log(selectInvaders, 'selectInvaders');
+      
+        
+      },
+     1000);
   };
-
-
 
   update() {
     let prevX = this.player.x;
