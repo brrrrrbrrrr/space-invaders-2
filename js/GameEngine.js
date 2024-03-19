@@ -1,4 +1,6 @@
-import { Player } from './Player.js';
+import { Player } from "./Player.js";
+import { Invaders } from "./Invaders.js";
+import { collision } from "./Collision.js";
 import { Projectile } from './Projectile.js';
 
 class GameEngine {
@@ -6,6 +8,8 @@ class GameEngine {
   ctx = null;
   items = [];
   player = null;
+  invader = null;
+  hasCollision = false;
   projectiles = [];
 
   keys = {
@@ -17,6 +21,7 @@ class GameEngine {
   };
 
   speed = 5;
+  invadersSpeed = 6;
   velocity = -10;
 
   constructor() {
@@ -24,6 +29,7 @@ class GameEngine {
     this.ctx = this.canvas.getContext('2d');
     this.canvas.width = innerWidth;
     this.canvas.height = innerHeight;
+    this.invader = new Invaders();
     this.player = new Player();
     this.player.x = this.canvas.width / 2 - this.player.getImg().width / 2;
     this.player.y = this.canvas.height - this.player.getImg().height;
@@ -31,10 +37,49 @@ class GameEngine {
 
   init() {
     this.initEvent();
+    this.generateInvaders();
+  }
 
-    // this.items = [
-    //     new Player( 200, 200),
-    // ]
+  generateInvaders() {
+    let count = 20;
+    let invaderHeight = this.invader.height;
+    let espacement = invaderHeight * 2;
+
+    for (let i = 0; i < count; i++) {
+      let newInvader = new Invaders(
+        Math.random() * (this.canvas.width - this.invader.width),
+        -50 - i * espacement,
+        Math.random() < 0.5 ? -1 : 1,
+        0.5
+      );
+      this.items.push(newInvader);
+    }
+  }
+
+  moveInvaders() {
+    for (let invader of this.items) {
+      // vérif si il y a collision par défaut collision=false
+      if (!invader.hasCollision) {
+        // permet d'établir la vitesse de déplacement horizontale
+        invader.x += invader.directionX * this.invadersSpeed;
+        // permet d'établir la vitesse de descente verticale
+        invader.y += (invader.directionY * this.invadersSpeed) / 3;
+        // vérif si les bords sont touchés si oui la direction du déplacement est inversée avec *-1
+        if (invader.x <= 0 || invader.x + invader.width >= this.canvas.width) {
+          invader.directionX *= -1;
+        }
+        if (invader.y + invader.height > this.canvas.height) {
+          invader.y = this.canvas.height - invader.height;
+          this.invadersSpeed=0;
+          this.gameOver();
+        }
+        // va permettre la collision de chaque élément du tableau
+        if (collision(this.player, invader)) {
+          invader.hasCollision = true;
+          this.hasCollision = true;
+        }
+      }
+    }
   }
 
   initEvent() {
@@ -105,22 +150,11 @@ class GameEngine {
     // }
 
     this.collisionBorder();
+    if (this.moveInvaders()) {
+      this.player.x = prevX;
+      this.player.y = prevY;
+    }
   }
-
-  // collisionItem() {
-  //     for (let item of this.items)
-  //     {
-  //         if (
-  //             this.player.x < item.getImg().width + item.x
-  //             && this.player.x + this.player.getImg().width > item.x
-  //             && this.player.y < item.getImg().height + item.y
-  //             && this.player.y + this.player.getImg().height > item.y
-  //         ) {
-  //             return true
-  //         }
-  //     }
-  //     return false
-  // }
 
   collisionBorder() {
     if (this.player.x < 0) {
@@ -129,16 +163,29 @@ class GameEngine {
     if (this.player.y < 0) {
       this.player.y = 0;
     }
-    if (this.player.x + this.player.img.width > this.canvas.width) {
-      this.player.x = this.canvas.width - this.player.img.width;
-    }
-    if (this.player.y + this.player.img.height > this.canvas.height) {
-      this.player.y = this.canvas.height - this.player.img.height;
+    if (this.player.x + this.player.width > this.canvas.width) {
+      this.player.x = this.canvas.width - this.player.width;
     }
   }
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    for (let item of this.items) {
+      this.ctx.drawImage(
+        item.getImg(),
+        item.x,
+        item.y,
+        item.width,
+        item.height
+      );
+    }
+    this.ctx.drawImage(
+      this.player.getImg(),
+      this.player.x,
+      this.player.y,
+      this.player.width,
+      this.player.height
+    );
     this.drawNewProjectile();
   }
 
@@ -146,7 +193,6 @@ class GameEngine {
     this.projectiles.forEach((projectile) => {
       this.ctx.drawImage(projectile.getImg(), projectile.x, projectile.y);
     });
-    this.ctx.drawImage(this.player.getImg(), this.player.x, this.player.y);
   }
 
   gameLoop() {
@@ -159,6 +205,16 @@ class GameEngine {
 
   run() {
     this.init();
+    this.gameLoop();
+  }
+
+
+  gameOver() {
+    document.getElementById('titleMenu').innerText = 'GAME OVER'
+    document.getElementById('contentMenu').innerText = 'La Terre a été envahie !!!'
+    document.getElementById('startBtn').innerText = 'Restart the Game'
+  
+    document.getElementById('menu').style = 'display: flex'
     /* let count = 0;
     for (let projectile of this.projectiles) {
       
@@ -176,5 +232,8 @@ class GameEngine {
     });
   }
 }
+
+
+
 
 export { GameEngine };
