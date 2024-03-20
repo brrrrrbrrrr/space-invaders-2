@@ -1,6 +1,7 @@
 import { Drawable } from "./Drawable.js";
 // import { collision } from "./Collision.js";
 
+
 class Invaders extends Drawable {
   // hasCollision = false;
   // invadersSpeed = 3;
