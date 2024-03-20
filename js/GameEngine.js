@@ -243,11 +243,9 @@ class GameEngine {
     // });
   }
 
-  gameOver(contentText) {
+  gameOver(contentMenu) {
     document.getElementById('titleMenu').innerText = 'GAME OVER';
-    document.getElementById('contentMenu').innerText = contentText;
-    // document.getElementById('contentMenu').innerText =
-    //     'La Terre a été envahie !!!';
+    document.getElementById('contentMenu').innerText = contentMenu;
     document.getElementById('startBtn').innerText = 'Restart the Game';
     document.getElementById('menu').style = 'display: flex';
 
