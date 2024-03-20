@@ -266,10 +266,15 @@ class GameEngine {
     }
   }
 
-  gameOver() {
+  resetConfig() {
+    this.speed = 5;
     this.items = [];
     this.invadersSpeed = 6;
     this.projectiles = [];
+  }
+
+  gameOver() {
+    this.resetConfig();
     document.getElementById('titleMenu').innerText = 'GAME OVER';
     document.getElementById('contentMenu').innerText =
       'La Terre a été envahie !!!';
