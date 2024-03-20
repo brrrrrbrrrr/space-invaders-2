@@ -150,8 +150,6 @@ class GameEngine {
   };
 
   update() {
-    console.log('LEVEL :', this.level);
-    console.log('invadersOnEarth :', this.invadersOnEarth);
     let prevX = this.player.x;
     let prevY = this.player.y;
 
@@ -161,7 +159,7 @@ class GameEngine {
     if (this.keys.right) {
       this.player.x += this.speed;
     }
-    console.log('INVADERS SPEED :', this.invadersSpeed);
+
     this.projectiles = this.projectiles.filter(
       (projectile) => projectile.y + projectile.getImg().height > 0
     );
@@ -170,7 +168,6 @@ class GameEngine {
     }
     if (this.keys.p) {
       this.items = [];
-      console.log('THIS ITEMS DELETE :', this.items);
     }
 
     // if (this.collisionItem()) {

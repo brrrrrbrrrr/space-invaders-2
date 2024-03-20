@@ -10,8 +10,6 @@ class Projectile extends Drawable {
   }
 
   projectileX() {
-    console.log('this img ;', this.img);
-    console.log('this player :', this.player);
     return this.player.x + this.player.getImg().width / 2 - this.img.width / 2;
   }
   projectileY() {
