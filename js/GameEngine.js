@@ -213,8 +213,9 @@ class GameEngine {
   }
 
   drawLives() {
-    this.ctx.font = '20px Arial';
-    this.ctx.fillText(`Lives: ${this.player.lives}`, 10, innerHeight);
+    const lives = document.getElementById('lives');
+    lives.innerText = `Vies: ${this.player.lives}`;
+    lives.height = innerHeight;
   }
 
   gameLoop() {

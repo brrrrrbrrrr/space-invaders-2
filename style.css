@@ -33,3 +33,8 @@
     padding: 50px;
     transform: translate(-50%, -50%);
 }
+
+#lives {
+    position: absolute;
+    font-size: 20px;
+}
