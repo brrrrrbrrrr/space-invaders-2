@@ -27,7 +27,7 @@ class GameEngine {
     p: false,
   };
 
-  speed = 5;
+  speed = null;
   invadersSpeed = null;
   velocity = -10;
 
@@ -46,6 +46,7 @@ class GameEngine {
     this.invadersSpeed = 6;
     this.invadersOnEarth = false;
     this.projectileSpeed = 1;
+    this.speed = 5;
   }
 
   init() {
@@ -257,6 +258,7 @@ class GameEngine {
     this.invadersSpeed += this.invadersSpeed;
     this.level++;
     this.projectileSpeed++;
+    this.speed += this.speed;
   }
 
   resetGame() {
@@ -270,6 +272,7 @@ class GameEngine {
   gameOver() {
     this.items = [];
     this.invadersSpeed = 6;
+    this.projectiles = [];
     document.getElementById('titleMenu').innerText = 'GAME OVER';
     document.getElementById('contentMenu').innerText =
       'La Terre a été envahie !!!';
