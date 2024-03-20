@@ -15,7 +15,6 @@ class GameEngine {
   //Liste de projectiles des invaders
   intervalId = null;
 
-
   keys = {
     up: false,
     down: false,
@@ -43,11 +42,10 @@ class GameEngine {
     this.initEvent();
     this.generateInvaders();
     this.generateInvadersProjectiles();
-
   }
 
   generateInvaders() {
-    let count = 10;
+    let count = 5;
     let invaderHeight = this.invader.height;
     let espacement = invaderHeight * 2;
 
@@ -147,24 +145,21 @@ class GameEngine {
   // };
 
   generateInvadersProjectiles = () => {
-   
-    
     // console.log(selectInvaders,"RRRRRRRRRRRRRRRRRR")
     // console.log(this.items[selectInvaders].y,"HHHHHHHHHHHHHHHHHHHHHH")
-  
-      this.intervalId = setInterval(() => {
-        const selectInvaders = Math.floor(Math.random() * this.items.length);
-        const invaderProjectile = new InvaderProjectile(
-          this.items[selectInvaders].x,
-          this.items[selectInvaders].y,
-          5,
-          -100,
-          this.items[selectInvaders].getImg().width / 2
-        );
-        this.invaderProjectiles.push(invaderProjectile);
-      }, 1000);
-  };
 
+    this.intervalId = setInterval(() => {
+      const selectInvaders = Math.floor(Math.random() * this.items.length);
+      const invaderProjectile = new InvaderProjectile(
+        this.items[selectInvaders].x,
+        this.items[selectInvaders].y,
+        5,
+        -100,
+        this.items[selectInvaders].getImg().width / 2
+      );
+      this.invaderProjectiles.push(invaderProjectile);
+    }, 1000);
+  };
 
   //*******************************DESTRUCTION PLAYER ET INVADERS ***************************************//
   destroyPlayer() {
