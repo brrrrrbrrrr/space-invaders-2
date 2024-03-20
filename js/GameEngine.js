@@ -1,8 +1,8 @@
-import { Player } from "./Player.js";
-import { Invaders } from "./Invaders.js";
-import { collision } from "./Collision.js";
-import { Projectile } from "./Projectile.js";
-import { InvaderProjectile } from "./InvaderProjectile.js";
+import { Player } from './Player.js';
+import { Invaders } from './Invaders.js';
+import { collision } from './Collision.js';
+import { Projectile } from './Projectile.js';
+import { InvaderProjectile } from './InvaderProjectile.js';
 
 class GameEngine {
   canvas = null;
@@ -11,6 +11,12 @@ class GameEngine {
   player = null;
   hasCollision = false;
   projectiles = [];
+  level = null;
+  lastFrameTime = null;
+  fpsInterval = null;
+  invadersOnEarth = null;
+  button = document.getElementById('startBtn');
+  projectileSpeed = null;
   invaderProjectiles = [];
   //Liste de projectiles des invaders
   intervalId = null;
@@ -21,25 +27,40 @@ class GameEngine {
     left: false,
     right: false,
     space: false,
+    p: false,
   };
 
-  speed = 5;
-  invadersSpeed = 1.5;
+  speed = null;
+  invadersSpeed = null;
 
   constructor() {
-    this.canvas = document.getElementById("game");
-    this.ctx = this.canvas.getContext("2d");
+    this.canvas = document.getElementById('game');
+    this.ctx = this.canvas.getContext('2d');
     this.canvas.width = innerWidth;
     this.canvas.height = innerHeight;
     this.invader = new Invaders();
     this.player = new Player();
     this.player.x = this.canvas.width / 2 - this.player.width / 2;
     this.player.y = this.canvas.height - this.player.height;
+    this.level = 1;
+    this.lastFrameTime = performance.now();
+    this.fpsInterval = 1000 / 100; //
+
+    this.invadersOnEarth = false;
+    this.projectileSpeed = 10;
+    this.speed = 5;
   }
 
   init() {
+    if (this.button.textContent === 'Niveau suivant') {
+      this.nextLevelConfig();
+    }
+
+    this.invadersOnEarth = false;
+    this.currentLevel = true;
     this.initEvent();
     this.generateInvaders();
+
     this.generateInvadersProjectiles();
   }
 
@@ -72,6 +93,8 @@ class GameEngine {
           invader.directionX *= -1;
         }
         if (invader.y + invader.height > this.canvas.height) {
+          // invader.y = this.canvas.height - invader.height;
+          this.invadersOnEarth = true;
           invader.y = this.canvas.height - invader.height;
           this.invadersSpeed = 0;
           this.gameOver('La Terre a été envahie !!!');
@@ -82,10 +105,10 @@ class GameEngine {
             invader.hasCollision = true;
             this.hasCollision = true;
             this.player.lives--;
-          }
-          else {
+          } else {
+            this.hasCollision = true;
             this.player.lives = 0;
-            this.gameOver("Tu n'as plus de vies !");
+            this.gameOver("Tu t'es fait eclaté par un vaisseau !!!");
           }
         }
       }
@@ -93,50 +116,58 @@ class GameEngine {
   }
 
   initEvent() {
-    window.addEventListener("keydown", (event) => {
+    window.addEventListener('keydown', (event) => {
       switch (event.key) {
-        case "ArrowLeft":
+        case 'ArrowLeft':
           this.keys.left = true;
           break;
-        case "ArrowRight":
+        case 'ArrowRight':
           this.keys.right = true;
           break;
-        case " ":
+        case ' ':
           this.keys.space = true;
+          break;
+        //Ajout d'une touche pour supprimer tous les invaders, pour tester le niveau suivant
+        case 'p':
+          this.keys.p = true;
           break;
       }
     });
 
-    window.addEventListener("keyup", (event) => {
+    window.addEventListener('keyup', (event) => {
       switch (event.key) {
-        case "ArrowLeft":
+        case 'ArrowLeft':
           this.keys.left = false;
           break;
-        case "ArrowRight":
+        case 'ArrowRight':
           this.keys.right = false;
           break;
-        case " ":
+        case ' ':
           this.keys.space = false;
           this.newProjectile();
+          break;
+        //Ajout d'une touche pour supprimer tous les invaders, pour tester le niveau suivant
+        case 'p':
+          this.keys.p = false;
           break;
       }
     });
   }
 
   newProjectile = () => {
-    const projectile = new Projectile(null, null);
-    // Pour chaque projectile, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
-    projectile.x = this.player.x + this.player.width / 2 - projectile.width / 2;
+    const projectile = new Projectile(null, null, this.player);
 
-    projectile.y = this.player.y;
+    // Pour chaque projectiles, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
+    projectile.x = projectile.projectileX();
+    projectile.y = projectile.projectileY();
     this.projectiles.push(projectile);
 
     // Check for collision with player
     if (collision(this.player, projectile)) {
-        projectile.hasCollision = true;
-        this.hasCollision = true;
+      projectile.hasCollision = true;
+      this.hasCollision = true;
     }
-  }
+  };
 
   // generateInvadersProjectiles = () => {
   // this.intervalId = setInterval(() => {
@@ -157,6 +188,7 @@ class GameEngine {
   // };
 
   generateInvadersProjectiles = () => {
+    clearInterval(this.intervalId);
     this.intervalId = setInterval(() => {
       const selectInvaders = Math.floor(Math.random() * this.items.length);
       const invaderProjectile = new InvaderProjectile(
@@ -180,8 +212,7 @@ class GameEngine {
           this.invaderProjectiles.splice(i, 1);
           this.player.lives--;
           return true;
-        }
-        else {
+        } else {
           this.player.lives = 0;
           this.gameOver("Tu n'as plus de vies !");
         }
@@ -196,7 +227,7 @@ class GameEngine {
       for (let j = 0; j < this.items.length; j++) {
         if (collision(playerProjectile, this.items[j])) {
           playerProjectile.hasCollision = true;
-          // console.log(invaderProjectile, "projectile")
+
           this.projectiles.splice(i, 1);
           this.items.splice(j, 1);
           return true;
@@ -221,7 +252,10 @@ class GameEngine {
       (projectile) => projectile.y + projectile.getImg().height > 0
     );
     for (let projectile of this.projectiles) {
-      projectile.y -= 5;
+      projectile.y -= this.projectileSpeed;
+    }
+    if (this.keys.p) {
+      this.items = [];
     }
 
     this.invaderProjectiles = this.invaderProjectiles.filter(
@@ -243,6 +277,15 @@ class GameEngine {
     if (this.moveInvaders()) {
       this.player.x = prevX;
       this.player.y = prevY;
+    }
+    // if (this.invadersOnEarth || this.items.length === 0) {
+    //   this.resetGame();
+    // }
+    if (this.invadersOnEarth) {
+      this.gameOver('Les envahisseurs ont atteint la terre');
+    }
+    if (this.items.length === 0) {
+      this.nextLevel();
     }
   }
 
@@ -312,43 +355,63 @@ class GameEngine {
   }
 
   gameLoop() {
-    this.update();
-    this.draw();
+    const currentTime = performance.now(); // Le temps maintenant
+    const elapsed = currentTime - this.lastFrameTime; // Le temps ecoulé
+
+    if (elapsed > this.fpsInterval) {
+      // Mettre à jour le dernier temps de frame pour le prochain cycle
+      this.lastFrameTime = currentTime - (elapsed % this.fpsInterval);
+      this.update();
+      this.draw();
+    }
+
     window.requestAnimationFrame(() => {
       this.gameLoop();
     });
   }
 
   run() {
+    this.resetConfig();
     this.init();
     this.gameLoop();
   }
 
+  //Création d'une fonction nextLevel qui aura le comportement suivant si elle est call
+  nextLevel() {
+    this.projectiles = [];
+    this.invaderProjectiles = [];
+    document.getElementById('titleMenu').innerText = 'BRAVO';
+    document.getElementById('contentMenu').innerText =
+      'Vous avez tué tous les envahisseurs !!!';
+    document.getElementById('startBtn').innerText = 'Niveau suivant';
+    document.getElementById('menu').style = 'display: flex';
+  }
+
+  //Configuration des modifications a ajouter pour le niveau suivant
+  nextLevelConfig() {
+    this.invadersSpeed += this.invadersSpeed;
+    this.level++;
+    this.projectileSpeed++;
+    this.speed += this.speed;
+    this.player.lives = 3;
+  }
+
+  resetConfig() {
+    this.player.lives = 3;
+    this.speed = 5;
+    this.items = [];
+    this.invadersSpeed = 1;
+    this.projectiles = [];
+    this.invaderProjectiles = [];
+    this.hasCollision = false;
+  }
+
   gameOver(contentMenu) {
-    clearInterval(this.intervalId);
     document.getElementById('titleMenu').innerText = 'GAME OVER';
     document.getElementById('contentMenu').innerText = contentMenu;
     document.getElementById('startBtn').innerText = 'Restart the Game';
     document.getElementById('menu').style = 'display: flex';
-
-    // TODO: resetGame, à conserver ? Cf. Benjamin
-    // Reset the game
-    // this.resetGame();
   }
-
-  // TODO: resetGame, à conserver ? Cf. Benjamin
-  resetGame() {
-    // Reset player's lives
-    this.player.lives = 3;
-
-    // Clear invaders and projectiles
-    this.items = [];
-    this.projectiles = [];
-
-    // Reset game state variables as needed
-    this.hasCollision = false;
-  }
-
 }
 
 export { GameEngine };
