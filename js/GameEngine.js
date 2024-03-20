@@ -16,6 +16,7 @@ class GameEngine {
   fpsInterval = null;
   invadersOnEarth = null;
   button = document.getElementById('startBtn');
+  projectileSpeed = null;
 
   keys = {
     up: false,
@@ -44,6 +45,7 @@ class GameEngine {
     this.fpsInterval = 1000 / 100; //
     this.invadersSpeed = 6;
     this.invadersOnEarth = false;
+    this.projectileSpeed = 1;
   }
 
   init() {
@@ -163,7 +165,7 @@ class GameEngine {
       (projectile) => projectile.y + projectile.getImg().height > 0
     );
     for (let projectile of this.projectiles) {
-      projectile.y -= 1;
+      projectile.y -= this.projectileSpeed;
     }
     if (this.keys.p) {
       this.items = [];
@@ -254,7 +256,7 @@ class GameEngine {
   nextLevelConfig() {
     this.invadersSpeed += this.invadersSpeed;
     this.level++;
-    this.projectiles.y--;
+    this.projectileSpeed++;
   }
 
   resetGame() {
