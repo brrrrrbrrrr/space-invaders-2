@@ -5,8 +5,8 @@ class InvaderProjectile extends Drawable {
     super(x, y,directionX,directionY, '../assets/images/laser.png');
     this.countFrame = 0;
     this.speed = 5;
-    this.height= 50;
-    this.width= 30;
+    this.height= 25;
+    this.width= 10;
   }
 
 }
