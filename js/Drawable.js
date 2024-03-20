@@ -4,6 +4,7 @@ class Drawable {
     y = 0;
     directionX = 0;
     directionY = 0;
+    onDestroy= false
   
     constructor(x, y, directionX, directionY, ...sources) {
       this.images = sources.map((src) => {
