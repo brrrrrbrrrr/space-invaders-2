@@ -120,10 +120,7 @@ class GameEngine {
   newProjectile = () => {
     const projectile = new Projectile(null, null);
     // Pour chaque projectiles, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
-    projectile.x =
-      this.player.x +
-      this.player.width / 2 -
-      projectile.width / 2;
+    projectile.x = this.player.x + this.player.width / 2 - projectile.width / 2;
 
     projectile.y = this.player.y;
     this.projectiles.push(projectile);
@@ -176,6 +173,23 @@ class GameEngine {
     return false;
   }
 
+  destroyInvaders() {
+    for (let i = 0; i < this.projectiles.length; i++) {
+      const playerProjectile = this.projectiles[i];
+      for (let j = 0; j < this.items.length; j++) {
+        if (collision(playerProjectile, this.items[j])) {
+          playerProjectile.hasCollision = true;
+          // console.log(invaderProjectile, "projectile")
+          this.projectiles.splice(i, 1);
+          this.items.splice(j, 1);
+          return true;
+        }
+      }
+    }
+    // Aucun joueur n'a été détruit
+    return false;
+  }
+
   update() {
     let prevX = this.player.x;
     let prevY = this.player.y;
@@ -208,7 +222,7 @@ class GameEngine {
     // }
 
     this.destroyPlayer();
-
+    this.destroyInvaders();
     this.collisionBorder();
     if (this.moveInvaders()) {
       this.player.x = prevX;
