@@ -15,6 +15,7 @@ class GameEngine {
   //Liste de projectiles des invaders
   intervalId = null;
 
+
   keys = {
     up: false,
     down: false,
@@ -24,7 +25,7 @@ class GameEngine {
   };
 
   speed = 5;
-  invadersSpeed = 3;
+  invadersSpeed = 1.5;
   velocity = -10;
 
   constructor() {
@@ -42,10 +43,11 @@ class GameEngine {
     this.initEvent();
     this.generateInvaders();
     this.generateInvadersProjectiles();
+
   }
 
   generateInvaders() {
-    let count = 20;
+    let count = 10;
     let invaderHeight = this.invader.height;
     let espacement = invaderHeight * 2;
 
@@ -145,20 +147,26 @@ class GameEngine {
   // };
 
   generateInvadersProjectiles = () => {
-    this.intervalId = setInterval(() => {
-      const selectInvaders = Math.floor(Math.random() * this.items.length);
-      const invaderProjectile = new InvaderProjectile(
-        this.items[selectInvaders].x,
-        this.items[selectInvaders].y,
-        5,
-        -100,
-        this.items[selectInvaders].getImg().width / 2
-      );
-      this.invaderProjectiles.push(invaderProjectile);
-      console.log(selectInvaders, "selectInvaders");
-    }, 1000);
+   
+    
+    // console.log(selectInvaders,"RRRRRRRRRRRRRRRRRR")
+    // console.log(this.items[selectInvaders].y,"HHHHHHHHHHHHHHHHHHHHHH")
+  
+      this.intervalId = setInterval(() => {
+        const selectInvaders = Math.floor(Math.random() * this.items.length);
+        const invaderProjectile = new InvaderProjectile(
+          this.items[selectInvaders].x,
+          this.items[selectInvaders].y,
+          5,
+          -100,
+          this.items[selectInvaders].getImg().width / 2
+        );
+        this.invaderProjectiles.push(invaderProjectile);
+      }, 1000);
   };
 
+
+  //*******************************DESTRUCTION PLAYER ET INVADERS ***************************************//
   destroyPlayer() {
     for (let i = 0; i < this.invaderProjectiles.length; i++) {
       const invaderProjectile = this.invaderProjectiles[i];
@@ -169,7 +177,6 @@ class GameEngine {
         return true;
       }
     }
-    // Aucun joueur n'a été détruit
     return false;
   }
 
@@ -186,10 +193,9 @@ class GameEngine {
         }
       }
     }
-    // Aucun joueur n'a été détruit
     return false;
   }
-
+  //*************************************************************************************//
   update() {
     let prevX = this.player.x;
     let prevY = this.player.y;
@@ -213,7 +219,7 @@ class GameEngine {
         invaderProjectile.y + invaderProjectile.getImg().height > 0
     );
     for (let invaderProjectile of this.invaderProjectiles) {
-      invaderProjectile.y += 9;
+      invaderProjectile.y += 3;
     }
 
     // if (this.collisionItem()) {
