@@ -7,10 +7,12 @@ class Projectile extends Drawable {
     this.countFrame = 0;
     this.player = player;
     this.img = super.getImg();
+    this.height = 50;
+    this.width = 30;
   }
 
   projectileX() {
-    return this.player.x + this.player.getImg().width / 2 - this.img.width / 2;
+    return this.player.x + this.player.width / 2 - this.width / 2;
   }
   projectileY() {
     return this.player.y;

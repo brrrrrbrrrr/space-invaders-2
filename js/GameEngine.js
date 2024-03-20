@@ -2,13 +2,13 @@ import { Player } from './Player.js';
 import { Invaders } from './Invaders.js';
 import { collision } from './Collision.js';
 import { Projectile } from './Projectile.js';
+import { InvaderProjectile } from './InvaderProjectile.js';
 
 class GameEngine {
   canvas = null;
   ctx = null;
   items = [];
   player = null;
-  invader = null;
   hasCollision = false;
   projectiles = [];
   level = null;
@@ -17,6 +17,9 @@ class GameEngine {
   invadersOnEarth = null;
   button = document.getElementById('startBtn');
   projectileSpeed = null;
+  invaderProjectiles = [];
+  //Liste de projectiles des invaders
+  intervalId = null;
 
   keys = {
     up: false,
@@ -29,7 +32,6 @@ class GameEngine {
 
   speed = null;
   invadersSpeed = null;
-  velocity = -10;
 
   constructor() {
     this.canvas = document.getElementById('game');
@@ -38,14 +40,14 @@ class GameEngine {
     this.canvas.height = innerHeight;
     this.invader = new Invaders();
     this.player = new Player();
-    this.player.x = this.canvas.width / 2 - this.player.getImg().width / 2;
-    this.player.y = this.canvas.height - this.player.getImg().height;
+    this.player.x = this.canvas.width / 2 - this.player.width / 2;
+    this.player.y = this.canvas.height - this.player.height;
     this.level = 1;
     this.lastFrameTime = performance.now();
     this.fpsInterval = 1000 / 100; //
-    this.invadersSpeed = 6;
+
     this.invadersOnEarth = false;
-    this.projectileSpeed = 1;
+    this.projectileSpeed = 10;
     this.speed = 5;
   }
 
@@ -58,10 +60,12 @@ class GameEngine {
     this.currentLevel = true;
     this.initEvent();
     this.generateInvaders();
+
+    this.generateInvadersProjectiles();
   }
 
   generateInvaders() {
-    let count = 20;
+    let count = 5;
     let invaderHeight = this.invader.height;
     let espacement = invaderHeight * 2;
 
@@ -78,7 +82,7 @@ class GameEngine {
 
   moveInvaders() {
     for (let invader of this.items) {
-      // vérif si il y a collision par défaut collision=false
+      // vérifier s'l y a collision par défaut collision=false
       if (!invader.hasCollision) {
         // permet d'établir la vitesse de déplacement horizontale
         invader.x += invader.directionX * this.invadersSpeed;
@@ -91,11 +95,21 @@ class GameEngine {
         if (invader.y + invader.height > this.canvas.height) {
           // invader.y = this.canvas.height - invader.height;
           this.invadersOnEarth = true;
+          invader.y = this.canvas.height - invader.height;
+          this.invadersSpeed = 0;
+          this.gameOver('La Terre a été envahie !!!');
         }
         // va permettre la collision de chaque élément du tableau
         if (collision(this.player, invader)) {
-          invader.hasCollision = true;
-          this.hasCollision = true;
+          if (this.player.lives > 1) {
+            invader.hasCollision = true;
+            this.hasCollision = true;
+            this.player.lives--;
+          } else {
+            this.hasCollision = true;
+            this.player.lives = 0;
+            this.gameOver("Tu t'es fait eclaté par un vaisseau !!!");
+          }
         }
       }
     }
@@ -147,8 +161,82 @@ class GameEngine {
     projectile.x = projectile.projectileX();
     projectile.y = projectile.projectileY();
     this.projectiles.push(projectile);
+
+    // Check for collision with player
+    if (collision(this.player, projectile)) {
+      projectile.hasCollision = true;
+      this.hasCollision = true;
+    }
   };
 
+  // generateInvadersProjectiles = () => {
+  // this.intervalId = setInterval(() => {
+  //     for (let invader of this.items) {
+  //       const invaderProjectile = new InvaderProjectile(
+  //         invader.x,
+  //         invader.y,
+  //         5,
+  //         -100,
+  //         invader.getImg().width / 2
+  //       );
+
+  //       console.log(invaderProjectile, 'invaderProjectile');
+
+  //       this.invaderProjectiles.push(invaderProjectile);
+  //     }
+  //   }, 1000);
+  // };
+
+  generateInvadersProjectiles = () => {
+    clearInterval(this.intervalId);
+    this.intervalId = setInterval(() => {
+      const selectInvaders = Math.floor(Math.random() * this.items.length);
+      const invaderProjectile = new InvaderProjectile(
+        this.items[selectInvaders].x,
+        this.items[selectInvaders].y,
+        5,
+        -100,
+        this.items[selectInvaders].getImg().width / 2
+      );
+      this.invaderProjectiles.push(invaderProjectile);
+    }, 1000);
+  };
+
+  //*******************************DESTRUCTION PLAYER ET INVADERS ***************************************//
+  destroyPlayer() {
+    for (let i = 0; i < this.invaderProjectiles.length; i++) {
+      const invaderProjectile = this.invaderProjectiles[i];
+      if (collision(invaderProjectile, this.player)) {
+        if (this.player.lives > 1) {
+          invaderProjectile.hasCollision = true;
+          this.invaderProjectiles.splice(i, 1);
+          this.player.lives--;
+          return true;
+        } else {
+          this.player.lives = 0;
+          this.gameOver("Tu n'as plus de vies !");
+        }
+      }
+    }
+    return false;
+  }
+
+  destroyInvaders() {
+    for (let i = 0; i < this.projectiles.length; i++) {
+      const playerProjectile = this.projectiles[i];
+      for (let j = 0; j < this.items.length; j++) {
+        if (collision(playerProjectile, this.items[j])) {
+          playerProjectile.hasCollision = true;
+
+          this.projectiles.splice(i, 1);
+          this.items.splice(j, 1);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  //*************************************************************************************//
   update() {
     let prevX = this.player.x;
     let prevY = this.player.y;
@@ -170,18 +258,34 @@ class GameEngine {
       this.items = [];
     }
 
+    this.invaderProjectiles = this.invaderProjectiles.filter(
+      (invaderProjectile) =>
+        invaderProjectile.y + invaderProjectile.getImg().height > 0
+    );
+    for (let invaderProjectile of this.invaderProjectiles) {
+      invaderProjectile.y += 3;
+    }
+
     // if (this.collisionItem()) {
     //     this.player.x = prevX
     //     this.player.y = prevY
     // }
 
+    this.destroyPlayer();
+    this.destroyInvaders();
     this.collisionBorder();
     if (this.moveInvaders()) {
       this.player.x = prevX;
       this.player.y = prevY;
     }
-    if (this.invadersOnEarth || this.items.length === 0) {
-      this.resetGame();
+    // if (this.invadersOnEarth || this.items.length === 0) {
+    //   this.resetGame();
+    // }
+    if (this.invadersOnEarth) {
+      this.gameOver('Les envahisseurs ont atteint la terre');
+    }
+    if (this.items.length === 0) {
+      this.nextLevel();
     }
   }
 
@@ -208,15 +312,46 @@ class GameEngine {
         item.height
       );
     }
-
+    this.ctx.drawImage(
+      this.player.getImg(),
+      this.player.x,
+      this.player.y,
+      this.player.width,
+      this.player.height
+    );
     this.drawNewProjectile();
+    this.drawInvaderProjectile();
+    this.drawLives();
   }
 
   drawNewProjectile() {
     this.projectiles.forEach((projectile) => {
-      this.ctx.drawImage(projectile.getImg(), projectile.x, projectile.y);
+      this.ctx.drawImage(
+        projectile.getImg(),
+        projectile.x,
+        projectile.y,
+        projectile.width,
+        projectile.height
+      );
     });
-    this.ctx.drawImage(this.player.getImg(), this.player.x, this.player.y);
+  }
+
+  drawInvaderProjectile() {
+    this.invaderProjectiles.forEach((invaderProjectile) => {
+      this.ctx.drawImage(
+        invaderProjectile.getImg(),
+        invaderProjectile.x,
+        invaderProjectile.y,
+        invaderProjectile.width,
+        invaderProjectile.height
+      );
+    });
+    //   this.ctx.drawImage(this.player.getImg(), this.player.x, this.player.y);
+  }
+
+  drawLives() {
+    const lives = document.getElementById('lives');
+    lives.innerText = `Vies: ${this.player.lives}`;
   }
 
   gameLoop() {
@@ -236,6 +371,7 @@ class GameEngine {
   }
 
   run() {
+    this.resetConfig();
     this.init();
     this.gameLoop();
   }
@@ -243,6 +379,7 @@ class GameEngine {
   //Création d'une fonction nextLevel qui aura le comportement suivant si elle est call
   nextLevel() {
     this.projectiles = [];
+    this.invaderProjectiles = [];
     document.getElementById('titleMenu').innerText = 'BRAVO';
     document.getElementById('contentMenu').innerText =
       'Vous avez tué tous les envahisseurs !!!';
@@ -256,30 +393,23 @@ class GameEngine {
     this.level++;
     this.projectileSpeed++;
     this.speed += this.speed;
-  }
-
-  resetGame() {
-    if (this.invadersOnEarth) {
-      this.gameOver();
-    } else {
-      this.nextLevel();
-    }
+    this.player.lives = 3;
   }
 
   resetConfig() {
+    this.player.lives = 3;
     this.speed = 5;
     this.items = [];
-    this.invadersSpeed = 6;
+    this.invadersSpeed = 1;
     this.projectiles = [];
+    this.invaderProjectiles = [];
+    this.hasCollision = false;
   }
 
-  gameOver() {
-    this.resetConfig();
+  gameOver(contentMenu) {
     document.getElementById('titleMenu').innerText = 'GAME OVER';
-    document.getElementById('contentMenu').innerText =
-      'La Terre a été envahie !!!';
+    document.getElementById('contentMenu').innerText = contentMenu;
     document.getElementById('startBtn').innerText = 'Restart the Game';
-
     document.getElementById('menu').style = 'display: flex';
   }
 }
