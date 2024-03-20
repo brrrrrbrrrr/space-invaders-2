@@ -18,6 +18,10 @@
 
 } */
 
+#container {
+    position: relative;
+}
+
 #menu {
     position: absolute;
     width: 100%;
@@ -36,5 +40,7 @@
 
 #lives {
     position: absolute;
-    font-size: 20px;
+    font-size: 25px;
+    left: 10px;
+    bottom: 0;
 }

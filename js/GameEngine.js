@@ -215,7 +215,6 @@ class GameEngine {
   drawLives() {
     const lives = document.getElementById('lives');
     lives.innerText = `Vies: ${this.player.lives}`;
-    lives.height = innerHeight;
   }
 
   gameLoop() {
