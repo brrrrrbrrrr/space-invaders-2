@@ -1,15 +1,14 @@
-import { Player } from './Player.js';
-import { Invaders } from './Invaders.js';
-import { collision } from './Collision.js';
-import { Projectile } from './Projectile.js';
-import { InvaderProjectile } from './InvaderProjectile.js';
+import { Player } from "./Player.js";
+import { Invaders } from "./Invaders.js";
+import { collision } from "./Collision.js";
+import { Projectile } from "./Projectile.js";
+import { InvaderProjectile } from "./InvaderProjectile.js";
 
 class GameEngine {
   canvas = null;
   ctx = null;
   items = [];
   player = null;
-  invader = null;
   hasCollision = false;
   projectiles = [];
   invaderProjectiles = [];
@@ -29,8 +28,8 @@ class GameEngine {
   velocity = -10;
 
   constructor() {
-    this.canvas = document.getElementById('game');
-    this.ctx = this.canvas.getContext('2d');
+    this.canvas = document.getElementById("game");
+    this.ctx = this.canvas.getContext("2d");
     this.canvas.width = innerWidth;
     this.canvas.height = innerHeight;
     this.invader = new Invaders();
@@ -88,40 +87,39 @@ class GameEngine {
   }
 
   initEvent() {
-    window.addEventListener('keydown', (event) => {
+    window.addEventListener("keydown", (event) => {
       switch (event.key) {
-        case 'ArrowLeft':
+        case "ArrowLeft":
           this.keys.left = true;
           break;
-        case 'ArrowRight':
+        case "ArrowRight":
           this.keys.right = true;
           break;
-        case ' ':
+        case " ":
           this.keys.space = true;
           break;
       }
     });
 
-    window.addEventListener('keyup', (event) => {
+    window.addEventListener("keyup", (event) => {
       switch (event.key) {
-        case 'ArrowLeft':
+        case "ArrowLeft":
           this.keys.left = false;
           break;
-        case 'ArrowRight':
+        case "ArrowRight":
           this.keys.right = false;
           break;
-        case ' ':
+        case " ":
           this.keys.space = false;
           this.newProjectile();
           break;
-      
       }
     });
   }
 
   newProjectile = () => {
     const projectile = new Projectile(null, null);
-    console.log('projectile : ', projectile);
+    console.log("projectile : ", projectile);
 
     // Pour chaque projectiles, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
     projectile.x =
@@ -132,7 +130,6 @@ class GameEngine {
     projectile.y = this.player.y;
     this.projectiles.push(projectile);
   };
-
 
   // generateInvadersProjectiles = () => {
   // this.intervalId = setInterval(() => {
@@ -155,20 +152,31 @@ class GameEngine {
   generateInvadersProjectiles = () => {
     this.intervalId = setInterval(() => {
       const selectInvaders = Math.floor(Math.random() * this.items.length);
-        const invaderProjectile = new InvaderProjectile(
-         this.items[selectInvaders].x,
-         this.items[selectInvaders].y,
-          5,
-          -100,
-         this.items[selectInvaders].getImg().width / 2
-        );
+      const invaderProjectile = new InvaderProjectile(
+        this.items[selectInvaders].x,
+        this.items[selectInvaders].y,
+        5,
+        -100,
+        this.items[selectInvaders].getImg().width / 2
+      );
       this.invaderProjectiles.push(invaderProjectile);
-      console.log(selectInvaders, 'selectInvaders');
-      
-        
-      },
-     1000);
+      console.log(selectInvaders, "selectInvaders");
+    }, 1000);
   };
+
+  destroyPlayer() {
+    for (let i = 0; i < this.invaderProjectiles.length; i++) {
+      const invaderProjectile = this.invaderProjectiles[i];
+      if (collision(invaderProjectile, this.player)) {
+        invaderProjectile.hasCollision = true;
+        // console.log(invaderProjectile, "projectile")
+        this.invaderProjectiles.splice(i, 1);
+        return true;
+      }
+    }
+    // Aucun joueur n'a été détruit
+    return false;
+  }
 
   update() {
     let prevX = this.player.x;
@@ -201,6 +209,8 @@ class GameEngine {
     //     this.player.y = prevY
     // }
 
+    this.destroyPlayer();
+
     this.collisionBorder();
     if (this.moveInvaders()) {
       this.player.x = prevX;
@@ -231,7 +241,6 @@ class GameEngine {
         item.height
       );
     }
-
     this.drawNewProjectile();
     this.drawInvaderProjectile();
   }
@@ -240,7 +249,13 @@ class GameEngine {
     this.projectiles.forEach((projectile) => {
       this.ctx.drawImage(projectile.getImg(), projectile.x, projectile.y);
     });
-    this.ctx.drawImage(this.player.getImg(), this.player.x, this.player.y);
+    this.ctx.drawImage(
+      this.player.getImg(),
+      this.player.x,
+      this.player.y,
+      this.player.width,
+      this.player.height
+    );
   }
 
   drawInvaderProjectile() {
@@ -269,12 +284,12 @@ class GameEngine {
 
   gameOver() {
     clearInterval(this.intervalId);
-    document.getElementById('titleMenu').innerText = 'GAME OVER';
-    document.getElementById('contentMenu').innerText =
-      'La Terre a été envahie !!!';
-    document.getElementById('startBtn').innerText = 'Restart the Game';
+    document.getElementById("titleMenu").innerText = "GAME OVER";
+    document.getElementById("contentMenu").innerText =
+      "La Terre a été envahie !!!";
+    document.getElementById("startBtn").innerText = "Restart the Game";
 
-    document.getElementById('menu').style = 'display: flex';
+    document.getElementById("menu").style = "display: flex";
     /* let count = 0;
     for (let projectile of this.projectiles) {
       
