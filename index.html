@@ -9,13 +9,12 @@
 <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
     <script defer type="module" src="./js/app.js"></script>
     <title>Space Invaders 2</title>
-  </head>
-  <body>
-  <div id="container">
-    <canvas id="game"></canvas>
-    <div id="menu">
-      <h1 id="titleMenu">SPACE INVADERS 2</h1>
-      <p id="contentMenu">
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="menu">
+    <h1 id="titleMenu">SPACE INVADERS 2</h1>
+    <p id="contentMenu">
         Dans les profondeurs inexplorées de l'espace, une menace puissante se
         profile à l'horizon.<br><br> Les redoutables extraterrestres 👾 connus sous le nom
         d'envahisseurs Zorgon se rassemblent pour envahir la planète Terre et
@@ -26,7 +25,11 @@
       </p>
       <button id="startBtn">Start the Game</button>
     </div>
-  <div id="lives"></div>
-  </div>
-  </body>
+  
+<div id="bottom-container">
+    <div id="lives" class="data"></div>
+    <div id="toKill" class="data"></div>
+    <div id="level" class="data"></div>
+</div>
+</body>
 </html>

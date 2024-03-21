@@ -3,6 +3,7 @@ import { Invaders } from './Invaders.js';
 import { collision } from './Collision.js';
 import { Projectile } from './Projectile.js';
 import { InvaderProjectile } from './InvaderProjectile.js';
+import { screen } from "./screen.js";
 
 class GameEngine {
   canvas = null;
@@ -57,10 +58,8 @@ class GameEngine {
     }
 
     this.invadersOnEarth = false;
-    this.currentLevel = true;
     this.initEvent();
     this.generateInvaders();
-
     this.generateInvadersProjectiles();
   }
 
@@ -179,9 +178,7 @@ class GameEngine {
   //         -100,
   //         invader.getImg().width / 2
   //       );
-
   //       console.log(invaderProjectile, 'invaderProjectile');
-
   //       this.invaderProjectiles.push(invaderProjectile);
   //     }
   //   }, 1000);
@@ -287,6 +284,8 @@ class GameEngine {
     if (this.items.length === 0) {
       this.nextLevel();
     }
+    screen(
+        this.player.lives, this.items, this.level);
   }
 
   collisionBorder() {
@@ -321,7 +320,6 @@ class GameEngine {
     );
     this.drawNewProjectile();
     this.drawInvaderProjectile();
-    this.drawLives();
   }
 
   drawNewProjectile() {
@@ -347,11 +345,6 @@ class GameEngine {
       );
     });
     //   this.ctx.drawImage(this.player.getImg(), this.player.x, this.player.y);
-  }
-
-  drawLives() {
-    const lives = document.getElementById('lives');
-    lives.innerText = `Vies: ${this.player.lives}`;
   }
 
   gameLoop() {

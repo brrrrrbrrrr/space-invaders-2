@@ -25,24 +25,16 @@
 }
 
 canvas {
-  position: relative;
-  background: url('./assets/images/Space.png') repeat 0 0;
-  width: 100%;
-  height: 100vh;
-  animation: galaxy 50s linear infinite;
+    position: relative;
+    background: url("./assets/images/Space.png") repeat 0 0;
+    width: 100%;
+    height: 90vh;
+    animation: galaxy 50s linear infinite;
 }
 
 @keyframes galaxy {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 0 100vh;
-  }
-}
-
-#container {
-  position: relative;
+    from { background-position: 0 0 }
+    to {  background-position: 0 100vh }
 }
 
 #menu {
@@ -112,9 +104,18 @@ canvas {
   }
 }
 
-#lives {
-  position: absolute;
-  font-size: 25px;
-  left: 10px;
-  bottom: 0;
+#bottom-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    height: 10vh;
+    width: 100vw;
+    background-color: lightgrey;
+}
+
+.data {
+    font-size: 25px;
+    margin-left: 1rem;
 }
