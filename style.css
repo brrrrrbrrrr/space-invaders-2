@@ -18,9 +18,10 @@
 
 } */
 
-#container {
-    position: relative;
-}
+/*#container {*/
+/*    position: relative;*/
+/*    padding: 1rem;*/
+/*}*/
 
 #menu {
     position: absolute;
@@ -39,8 +40,10 @@
 }
 
 #lives {
-    position: absolute;
+    /*position: absolute;*/
     font-size: 25px;
-    left: 10px;
+    background-color: lightgrey;
+    height: 5rem;
+    width: 100vw;
     bottom: 0;
 }
