@@ -1,9 +1,18 @@
+<<<<<<< HEAD
 import { Player } from "./Player.js";
 import { Invaders } from "./Invaders.js";
 import { collision } from "./Collision.js";
 import { Projectile } from "./Projectile.js";
 import { InvaderProjectile } from "./InvaderProjectile.js";
 import { Explosion } from "./Explosion.js";
+=======
+import { Player } from './Player.js';
+import { Invaders } from './Invaders.js';
+import { collision } from './Collision.js';
+import { Projectile } from './Projectile.js';
+import { InvaderProjectile } from './InvaderProjectile.js';
+import { screen } from "./screen.js";
+>>>>>>> dev
 
 class GameEngine {
   canvas = null;
@@ -59,10 +68,8 @@ class GameEngine {
     }
 
     this.invadersOnEarth = false;
-    this.currentLevel = true;
     this.initEvent();
     this.generateInvaders();
-
     this.generateInvadersProjectiles();
   }
 
@@ -181,9 +188,7 @@ class GameEngine {
   //         -100,
   //         invader.getImg().width / 2
   //       );
-
   //       console.log(invaderProjectile, 'invaderProjectile');
-
   //       this.invaderProjectiles.push(invaderProjectile);
   //     }
   //   }, 1000);
@@ -320,6 +325,8 @@ class GameEngine {
       });
     }, 8500);
     
+    screen(
+        this.player.lives, this.items, this.level);
   }
 
   collisionBorder() {
@@ -356,7 +363,6 @@ class GameEngine {
     this.drawExplosions();
     this.drawNewProjectile();
     this.drawInvaderProjectile();
-    this.drawLives();
   }
 
   drawNewProjectile() {
