@@ -286,7 +286,8 @@ class GameEngine {
     if (this.items.length === 0) {
       this.nextLevel();
     }
-    screen(this.player.lives);
+    screen(
+        this.player.lives, this.items);
   }
 
   collisionBorder() {

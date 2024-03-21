@@ -8,7 +8,7 @@ canvas {
     position: relative;
     background: url("./assets/images/Space.png") repeat 0 0;
     width: 100%;
-    height: 100vh;
+    height: 90vh;
     animation: galaxy 50s linear infinite;
 }
 
@@ -16,9 +16,7 @@ canvas {
     from { background-position: 0 0 }
     to {  background-position: 0 100vh }
 
-} 
-
-
+}
 
 /*#container {*/
 /*    position: relative;*/
@@ -41,11 +39,17 @@ canvas {
     transform: translate(-50%, -50%);
 }
 
-#lives {
-    /*position: absolute;*/
-    font-size: 25px;
-    background-color: lightgrey;
-    height: 5rem;
+#bottom-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 10vh;
     width: 100vw;
-    bottom: 0;
+    background-color: lightgrey;
+}
+
+.data {
+    flex: auto;
+    font-size: 25px;
+    margin-left: 1rem;
 }
