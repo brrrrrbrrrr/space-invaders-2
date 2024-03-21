@@ -3,6 +3,8 @@ import { Invaders } from './Invaders.js';
 import { collision } from './Collision.js';
 import { Projectile } from './Projectile.js';
 import { InvaderProjectile } from './InvaderProjectile.js';
+import { soundArray } from './soundEffect.js';
+import { generateSound } from './soundEffect.js';
 
 class GameEngine {
   canvas = null;
@@ -102,10 +104,12 @@ class GameEngine {
         // va permettre la collision de chaque élément du tableau
         if (collision(this.player, invader)) {
           if (this.player.lives > 1) {
+            generateSound(soundArray[1].name, soundArray[1].src);
             invader.hasCollision = true;
             this.hasCollision = true;
             this.player.lives--;
           } else {
+            generateSound(soundArray[2].name, soundArray[2].src);
             this.hasCollision = true;
             this.player.lives = 0;
             this.gameOver("Tu t'es fait eclaté par un vaisseau !!!");
@@ -155,6 +159,7 @@ class GameEngine {
   }
 
   newProjectile = () => {
+    generateSound(soundArray[0].name, soundArray[0].src);
     const projectile = new Projectile(null, null, this.player);
 
     // Pour chaque projectiles, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
@@ -208,11 +213,13 @@ class GameEngine {
       const invaderProjectile = this.invaderProjectiles[i];
       if (collision(invaderProjectile, this.player)) {
         if (this.player.lives > 1) {
+          generateSound(soundArray[1].name, soundArray[1].src);
           invaderProjectile.hasCollision = true;
           this.invaderProjectiles.splice(i, 1);
           this.player.lives--;
           return true;
         } else {
+          generateSound(soundArray[2].name, soundArray[2].src);
           this.player.lives = 0;
           this.gameOver("Tu n'as plus de vies !");
         }
@@ -226,6 +233,7 @@ class GameEngine {
       const playerProjectile = this.projectiles[i];
       for (let j = 0; j < this.items.length; j++) {
         if (collision(playerProjectile, this.items[j])) {
+          generateSound(soundArray[3].name, soundArray[3].src);
           playerProjectile.hasCollision = true;
 
           this.projectiles.splice(i, 1);
@@ -236,6 +244,7 @@ class GameEngine {
     }
     return false;
   }
+
   //*************************************************************************************//
   update() {
     let prevX = this.player.x;
