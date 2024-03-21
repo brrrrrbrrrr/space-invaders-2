@@ -22,6 +22,13 @@
   --clr-3: #0e4b50;
   --clr-4: #2d8f85;
   --clr-5: #606ebf;
+  --clr-6:#C2C4F2;
+  --clr-7:#3C3E73
+}
+
+body{
+  background: var(--clr-5);
+ 
 }
 
 canvas {
@@ -83,8 +90,26 @@ canvas {
 
 #startBtn {
   padding: 12px;
-  border-radius: 12px;
+  border-radius: 20px;
   background-color: var(--clr-5);
+ position:relative;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 6px var(--clr-7);
+  border:none;
+  
+}
+
+#startBtn:hover{
+  box-shadow:0 4px var(--clr-7);
+  top: 2px;
+  color:var(--clr-6);
+ 
+}
+
+#startBtn:active{
+  box-shadow:0 0px var(--clr-7);
+  top: 6px;
 }
 
 #titleMenu {
@@ -111,8 +136,12 @@ canvas {
     align-items: center;
     justify-content: center;
     height: 10vh;
-    width: 100vw;
-    background-color: lightgrey;
+    /* width: 100vw; */
+
+    background: var(--clr-5);
+   
+   
+ 
 }
 
 .data {
