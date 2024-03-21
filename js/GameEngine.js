@@ -112,6 +112,7 @@ class GameEngine {
             this.player.lives--;
           } else {
             generateSound(soundArray[2].name, soundArray[2].src);
+
             this.hasCollision = true;
             this.player.lives = 0;
             this.gameOver("Tu t'es fait eclaté par un vaisseau !!!");
@@ -222,6 +223,7 @@ class GameEngine {
           return true;
         } else {
           generateSound(soundArray[2].name, soundArray[2].src);
+          generateSound(soundArray[5].name, soundArray[5].src);
           this.player.lives = 0;
           this.gameOver("Tu n'as plus de vies !");
         }
