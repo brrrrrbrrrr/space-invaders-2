@@ -58,10 +58,8 @@ class GameEngine {
     }
 
     this.invadersOnEarth = false;
-    this.currentLevel = true;
     this.initEvent();
     this.generateInvaders();
-
     this.generateInvadersProjectiles();
   }
 
@@ -287,7 +285,7 @@ class GameEngine {
       this.nextLevel();
     }
     screen(
-        this.player.lives, this.items);
+        this.player.lives, this.items, this.level);
   }
 
   collisionBorder() {
