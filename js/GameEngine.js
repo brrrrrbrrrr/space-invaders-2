@@ -18,6 +18,7 @@ class GameEngine {
   fpsInterval = null;
   invadersOnEarth = null;
   button = document.getElementById('startBtn');
+
   projectileSpeed = null;
   invaderProjectiles = [];
   //Liste de projectiles des invaders
@@ -51,6 +52,7 @@ class GameEngine {
     this.invadersOnEarth = false;
     this.projectileSpeed = 10;
     this.speed = 5;
+    this.startSound = true;
   }
 
   init() {
@@ -380,6 +382,8 @@ class GameEngine {
   }
 
   run() {
+    // generateSound(soundArray[4].name, soundArray[4].src);
+
     this.resetConfig();
     this.init();
     this.gameLoop();

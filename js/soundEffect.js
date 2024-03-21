@@ -19,6 +19,11 @@ const soundArray = [
     name: 'invadersHit',
     src: '../assets/sounds/invaders-explosion.wav',
   },
+  {
+    id: 5,
+    name: 'ambiance',
+    src: '../assets/sounds/ambiance.mp3',
+  },
 ];
 
 const generateSound = (name, src) => {
