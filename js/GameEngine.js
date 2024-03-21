@@ -1,18 +1,10 @@
-<<<<<<< HEAD
 import { Player } from "./Player.js";
 import { Invaders } from "./Invaders.js";
 import { collision } from "./Collision.js";
 import { Projectile } from "./Projectile.js";
 import { InvaderProjectile } from "./InvaderProjectile.js";
 import { Explosion } from "./Explosion.js";
-=======
-import { Player } from './Player.js';
-import { Invaders } from './Invaders.js';
-import { collision } from './Collision.js';
-import { Projectile } from './Projectile.js';
-import { InvaderProjectile } from './InvaderProjectile.js';
 import { screen } from "./screen.js";
->>>>>>> dev
 
 class GameEngine {
   canvas = null;
