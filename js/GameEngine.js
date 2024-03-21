@@ -6,6 +6,7 @@ import { InvaderProjectile } from './InvaderProjectile.js';
 import { soundArray } from './soundEffect.js';
 import { generateSound } from './soundEffect.js';
 import { screen } from './screen.js';
+import { Explosion } from './Explosion.js';
 
 class GameEngine {
   canvas = null;
@@ -22,6 +23,7 @@ class GameEngine {
 
   projectileSpeed = null;
   invaderProjectiles = [];
+  explosions = [];
   //Liste de projectiles des invaders
   intervalId = null;
 
@@ -240,17 +242,31 @@ class GameEngine {
         if (collision(playerProjectile, this.items[j])) {
           generateSound(soundArray[3].name, soundArray[3].src);
           playerProjectile.hasCollision = true;
-
+          console.log(this.explosions);
+          console.log(
+            this.explosionInvaders(this.items[j]),
+            'RRRRRRRRRRRRRRRRRRRRRRRRRR'
+          );
+          console.log(this.items[j], 'GGGGGGGGGGGGGGGGGGGG');
           this.projectiles.splice(i, 1);
           this.items.splice(j, 1);
           return true;
         }
       }
     }
-    return false;
   }
 
   //*************************************************************************************//
+
+  //******************************EXPLOSIONS***********************************//
+  explosionInvaders(item) {
+    const explosion = new Explosion(null, null);
+    explosion.x = item.x;
+    explosion.y = item.y;
+    this.explosions.push(explosion);
+  }
+
+  //******************************************************************************//
   update() {
     let prevX = this.player.x;
     let prevY = this.player.y;
@@ -301,6 +317,22 @@ class GameEngine {
     if (this.items.length === 0) {
       this.nextLevel();
     }
+
+    for (let explosion of this.explosions) {
+      if (!explosion.isFinished) {
+        explosion.currentFrameIndex++;
+
+        if (explosion.currentFrameIndex >= explosion.images.length) {
+          explosion.isFinished = true;
+        }
+      }
+    }
+    setTimeout(() => {
+      this.explosions = this.explosions.filter((explosion) => {
+        return !explosion.isFinished;
+      });
+    }, 8500);
+
     screen(this.player.lives, this.items, this.level);
   }
 
@@ -334,6 +366,8 @@ class GameEngine {
       this.player.width,
       this.player.height
     );
+
+    this.drawExplosions();
     this.drawNewProjectile();
     this.drawInvaderProjectile();
   }
@@ -361,6 +395,23 @@ class GameEngine {
       );
     });
     //   this.ctx.drawImage(this.player.getImg(), this.player.x, this.player.y);
+  }
+
+  drawExplosions() {
+    this.explosions.forEach((explosion) => {
+      this.ctx.drawImage(
+        explosion.getImg(),
+        explosion.x,
+        explosion.y
+        // explosion.width,
+        // explosion.height
+      );
+    });
+  }
+
+  drawLives() {
+    const lives = document.getElementById('lives');
+    lives.innerText = `Vies: ${this.player.lives}`;
   }
 
   gameLoop() {
