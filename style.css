@@ -4,19 +4,21 @@
     box-sizing: border-box;
 }
 
-/* canvas {
-    position: fixed;
-    background: url("./assets/images/background.png") repeat 0 0;
-    width: 100vw;
+canvas {
+    position: relative;
+    background: url("./assets/images/Space.png") repeat 0 0;
+    width: 100%;
     height: 100vh;
-    animation: galaxy 10s linear infinite;
+    animation: galaxy 50s linear infinite;
 }
 
 @keyframes galaxy {
     from { background-position: 0 0 }
     to {  background-position: 0 100vh }
 
-} */
+} 
+
+
 
 /*#container {*/
 /*    position: relative;*/
