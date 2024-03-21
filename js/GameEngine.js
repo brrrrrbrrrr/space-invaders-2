@@ -110,7 +110,7 @@ class GameEngine {
             invader.hasCollision = true;
             this.hasCollision = true;
             this.player.lives--;
-          } else {
+          } else if (this.player.lives === 1) {
             generateSound(soundArray[2].name, soundArray[2].src);
 
             this.hasCollision = true;
@@ -150,8 +150,12 @@ class GameEngine {
           this.keys.right = false;
           break;
         case ' ':
-          this.keys.space = false;
-          this.newProjectile();
+          if (this.player.lives > 0) {
+            this.keys.space = false;
+
+            this.newProjectile();
+          }
+
           break;
         //Ajout d'une touche pour supprimer tous les invaders, pour tester le niveau suivant
         case 'p':
@@ -221,7 +225,7 @@ class GameEngine {
           this.invaderProjectiles.splice(i, 1);
           this.player.lives--;
           return true;
-        } else {
+        } else if (this.player.lives === 1) {
           generateSound(soundArray[2].name, soundArray[2].src);
           generateSound(soundArray[5].name, soundArray[5].src);
           this.player.lives = 0;
@@ -419,9 +423,13 @@ class GameEngine {
     this.projectiles = [];
     this.invaderProjectiles = [];
     this.hasCollision = false;
+    this.projectileSpeed = 10;
   }
 
   gameOver(contentMenu) {
+    clearInterval(this.intervalId);
+    this.hasCollision = false;
+
     document.getElementById('titleMenu').innerText = 'GAME OVER';
     document.getElementById('contentMenu').innerText = contentMenu;
     document.getElementById('startBtn').innerText = 'Restart the Game';
