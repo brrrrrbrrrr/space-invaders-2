@@ -20,7 +20,7 @@ export class Explosion extends Drawable {
     );
 
     this.frame = Math.floor(Math.random() * (this.images.length - 1));
-    this.refresh = 1000;
+    this.refresh = 5000;
     this.dateFrame = Date.now() + this.refresh;
   }
 
