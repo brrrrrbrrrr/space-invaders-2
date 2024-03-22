@@ -20,7 +20,7 @@ class GameEngine {
   fpsInterval = null;
   invadersOnEarth = null;
   button = document.getElementById('startBtn');
-
+  isGameOver = null;
   projectileSpeed = null;
   invaderProjectiles = [];
   explosions = [];
@@ -45,28 +45,40 @@ class GameEngine {
     this.canvas.width = innerWidth;
     this.canvas.height = innerHeight;
     this.invader = new Invaders();
-    this.player = new Player();
-    this.player.x = this.canvas.width / 2 - this.player.width / 2;
-    this.player.y = this.canvas.height - this.player.height;
+    this.isGameOver = false;
     this.level = 1;
     this.lastFrameTime = performance.now();
     this.fpsInterval = 1000 / 100; //
-
     this.invadersOnEarth = false;
     this.projectileSpeed = 10;
     this.speed = 5;
     this.startSound = true;
+    this.invadersSpeed = 1;
+  }
+
+  initPlayer() {
+    this.player = new Player();
+    this.player.x = this.canvas.width / 2 - this.player.width / 2;
+    this.player.y = this.canvas.height - this.player.height;
   }
 
   init() {
-    if (this.button.textContent === 'Niveau suivant') {
-      this.nextLevelConfig();
+    this.initPlayer();
+    if (this.isGameOver) {
+      this.resetConfig();
+      this.isGameOver = false;
+    } else {
+      if (this.button.textContent === 'Niveau suivant') {
+        this.nextLevelConfig();
+      }
     }
 
     this.invadersOnEarth = false;
-    this.initEvent();
+
     this.generateInvaders();
-    this.generateInvadersProjectiles();
+    if (this.items.length !== 0) {
+      this.generateInvadersProjectiles();
+    }
   }
 
   generateInvaders() {
@@ -200,17 +212,20 @@ class GameEngine {
 
   generateInvadersProjectiles = () => {
     clearInterval(this.intervalId);
-    this.intervalId = setInterval(() => {
-      const selectInvaders = Math.floor(Math.random() * this.items.length);
-      const invaderProjectile = new InvaderProjectile(
-        this.items[selectInvaders].x,
-        this.items[selectInvaders].y,
-        5,
-        -100,
-        this.items[selectInvaders].getImg().width / 2
-      );
-      this.invaderProjectiles.push(invaderProjectile);
-    }, 1000);
+    console.log('THI ITEM', this.items);
+    if (this.items.length !== 0) {
+      this.intervalId = setInterval(() => {
+        const selectInvaders = Math.floor(Math.random() * this.items.length);
+        const invaderProjectile = new InvaderProjectile(
+          this.items[selectInvaders]?.x,
+          this.items[selectInvaders]?.y,
+          5,
+          -100,
+          this.items[selectInvaders]?.getImg().width / 2
+        );
+        this.invaderProjectiles.push(invaderProjectile);
+      }, 1000);
+    }
   };
 
   //*******************************DESTRUCTION PLAYER ET INVADERS ***************************************//
@@ -394,7 +409,6 @@ class GameEngine {
         invaderProjectile.height
       );
     });
-    //   this.ctx.drawImage(this.player.getImg(), this.player.x, this.player.y);
   }
 
   drawExplosions() {
@@ -431,10 +445,9 @@ class GameEngine {
   }
 
   run() {
-    // generateSound(soundArray[4].name, soundArray[4].src);
-
-    this.resetConfig();
     this.init();
+    this.initEvent();
+
     this.gameLoop();
   }
 
@@ -459,6 +472,7 @@ class GameEngine {
   }
 
   resetConfig() {
+    this.level = 1;
     this.player.lives = 3;
     this.speed = 5;
     this.items = [];
@@ -470,6 +484,7 @@ class GameEngine {
   }
 
   gameOver(contentMenu) {
+    this.isGameOver = true;
     clearInterval(this.intervalId);
     this.hasCollision = false;
 
