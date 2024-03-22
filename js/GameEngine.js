@@ -70,7 +70,7 @@ class GameEngine {
   }
 
   generateInvaders() {
-    let count = 5;
+    let count = 10;
     let invaderHeight = this.invader.height;
     let espacement = invaderHeight * 2;
 
@@ -223,7 +223,7 @@ class GameEngine {
         if (this.player.lives > 1) {
           generateSound(soundArray[1].name, soundArray[1].src);
           invaderProjectile.hasCollision = true;
-          this.explosionInvaders(invaderProjectile)
+          this.explosionInvaders(invaderProjectile);
           this.invaderProjectiles.splice(i, 1);
           this.player.lives--;
           return true;
@@ -449,10 +449,10 @@ class GameEngine {
 
   //Configuration des modifications a ajouter pour le niveau suivant
   nextLevelConfig() {
-    this.invadersSpeed += this.invadersSpeed;
+    this.invadersSpeed *= 1.5;
     this.level++;
     this.projectileSpeed++;
-    this.speed += this.speed;
+    this.speed *= 1.5;
     this.player.lives = 3;
     this.projectiles = [];
   }
@@ -466,6 +466,7 @@ class GameEngine {
     this.invaderProjectiles = [];
     this.hasCollision = false;
     this.projectileSpeed = 10;
+    this.level = 1;
   }
 
   gameOver(contentMenu) {
