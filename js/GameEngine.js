@@ -105,6 +105,8 @@ class GameEngine {
           if (this.player.lives > 1) {
             invader.hasCollision = true;
             this.hasCollision = true;
+            this.explosionInvaders(invader);
+            this.items.splice(invader, 1);
             this.player.lives--;
           } else {
             this.hasCollision = true;
@@ -226,12 +228,7 @@ class GameEngine {
       for (let j = 0; j < this.items.length; j++) {
         if (collision(playerProjectile, this.items[j])) {
           playerProjectile.hasCollision = true;
-          console.log(this.explosions);
-          console.log(
-            this.explosionInvaders(this.items[j]),
-            "RRRRRRRRRRRRRRRRRRRRRRRRRR"
-          );
-          console.log(this.items[j], "GGGGGGGGGGGGGGGGGGGG");
+          this.explosionInvaders(this.items[j]), this.projectiles.splice(i, 1);
           this.projectiles.splice(i, 1);
           this.items.splice(j, 1);
           return true;
@@ -263,7 +260,7 @@ class GameEngine {
     }
 
     this.projectiles = this.projectiles.filter(
-      (projectile) => projectile.y + projectile.getImg().height > 0
+      (projectile) => projectile.y + projectile.height > 0
     );
     for (let projectile of this.projectiles) {
       projectile.y -= this.projectileSpeed;
@@ -316,9 +313,8 @@ class GameEngine {
         return !explosion.isFinished;
       });
     }, 8500);
-    
-    screen(
-        this.player.lives, this.items, this.level);
+
+    screen(this.player.lives, this.items, this.level);
   }
 
   collisionBorder() {
@@ -439,6 +435,7 @@ class GameEngine {
     this.projectileSpeed++;
     this.speed += this.speed;
     this.player.lives = 3;
+    this.projectiles = [];
   }
 
   resetConfig() {
