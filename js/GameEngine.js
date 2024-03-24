@@ -26,6 +26,7 @@ class GameEngine {
   explosions = [];
   //Liste de projectiles des invaders
   intervalId = null;
+  bonusPosition = null;
 
   keys = {
     up: false,
@@ -54,6 +55,8 @@ class GameEngine {
     this.speed = 5;
     this.startSound = true;
     this.invadersSpeed = 1;
+    this.bonusPosition = 0;
+    this.isBonusDiscoverd = false;
   }
 
   initPlayer() {
@@ -92,8 +95,10 @@ class GameEngine {
         Math.random() * (this.canvas.width - this.invader.width),
         -50 - i * espacement,
         Math.random() < 0.5 ? -1 : 1,
-        0.5
+        0.5,
+        false
       );
+      console.log(newInvader);
       this.items.push(newInvader);
     }
   }
@@ -214,9 +219,13 @@ class GameEngine {
   // };
 
   generateBonusPosition() {
-    const bonusPosition = Math.floor(Math.random() * this.items.length);
-    console.log('bonusPosition', bonusPosition);
+    this.bonusPosition = Math.floor(Math.random() * this.items.length);
+    console.log('bonusPosition', this.bonusPosition);
+    this.items[this.bonusPosition].isBonus = true;
+    console.log('items :', this.items);
   }
+
+  dropBonus() {}
 
   generateInvadersProjectiles = () => {
     clearInterval(this.intervalId);
@@ -263,12 +272,28 @@ class GameEngine {
     for (let i = 0; i < this.projectiles.length; i++) {
       const playerProjectile = this.projectiles[i];
       for (let j = 0; j < this.items.length; j++) {
-        if (collision(playerProjectile, this.items[j])) {
+        if (
+          collision(playerProjectile, this.items[j]) &&
+          this.items[j].isBonus === false
+        ) {
           generateSound(soundArray[3].name, soundArray[3].src);
           playerProjectile.hasCollision = true;
           this.explosionInvaders(this.items[j]), this.projectiles.splice(i, 1);
           this.projectiles.splice(i, 1);
           this.items.splice(j, 1);
+
+          return true;
+        } else if (
+          collision(playerProjectile, this.items[j]) &&
+          this.items[j].isBonus === true
+        ) {
+          console.log('bonus tué');
+          generateSound(soundArray[3].name, soundArray[3].src);
+          playerProjectile.hasCollision = true;
+          this.explosionInvaders(this.items[j]), this.projectiles.splice(i, 1);
+          this.projectiles.splice(i, 1);
+          this.items.splice(j, 1);
+
           return true;
         }
       }
@@ -329,6 +354,7 @@ class GameEngine {
     this.destroyPlayer();
     this.destroyInvaders();
     this.collisionBorder();
+    this.dropBonus();
     if (this.moveInvaders()) {
       this.player.x = prevX;
       this.player.y = prevY;
