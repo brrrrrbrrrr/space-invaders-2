@@ -227,7 +227,11 @@ class GameEngine {
     console.log('items :', this.items);
   }
 
-  dropBonus() {}
+  dropBonus() {
+    if (this.isBonusDiscoverd) {
+      this.newBonus.y += this.invadersSpeed;
+    }
+  }
 
   generateInvadersProjectiles = () => {
     clearInterval(this.intervalId);
@@ -289,15 +293,15 @@ class GameEngine {
           collision(playerProjectile, this.items[j]) &&
           this.items[j].isBonus === true
         ) {
+          this.isBonusDiscoverd = true;
           console.log('bonus tué');
           generateSound(soundArray[3].name, soundArray[3].src);
           playerProjectile.hasCollision = true;
+          (this.newBonus.x = this.items[j].x),
+            (this.newBonus.y = this.items[j].y);
           this.explosionInvaders(this.items[j]), this.projectiles.splice(i, 1);
           this.projectiles.splice(i, 1);
           this.items.splice(j, 1);
-
-          (this.newBonus.x = this.items[j].x),
-            (this.newBonus.y = this.items[j].y);
 
           console.log('newBonus :', this.newBonus);
           return true;
