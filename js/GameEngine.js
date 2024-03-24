@@ -58,10 +58,14 @@ class GameEngine {
     this.invadersSpeed = 1;
     this.bonusPosition = 0;
     this.isBonusDiscoverd = false;
-    this.newBonus = new Bonus(null, null);
+    this.bonusChoice = Math.floor(Math.random() * 2);
+    this.newBonus = new Bonus(-100, -100, null, this.bonusChoice);
+    this.currentBonus = null;
+    this.firePower = false;
   }
 
   initPlayer() {
+    console.log('bonusChoice = ', this.bonusChoice);
     this.player = new Player();
     this.player.x = this.canvas.width / 2 - this.player.width / 2;
     this.player.y = this.canvas.height - this.player.height;
@@ -177,6 +181,9 @@ class GameEngine {
             this.keys.space = false;
 
             this.newProjectile();
+            if (this.firePower) {
+              this.bonusFirePowerAction();
+            }
           }
 
           break;
@@ -227,12 +234,6 @@ class GameEngine {
     console.log('items :', this.items);
   }
 
-  dropBonus() {
-    if (this.isBonusDiscoverd) {
-      this.newBonus.y += this.invadersSpeed;
-    }
-  }
-
   generateInvadersProjectiles = () => {
     clearInterval(this.intervalId);
     if (this.items.length !== 0) {
@@ -274,6 +275,56 @@ class GameEngine {
     return false;
   }
 
+  dropBonus() {
+    if (this.isBonusDiscoverd) {
+      this.newBonus.y += this.invadersSpeed;
+    }
+  }
+
+  takeBonus() {
+    if (collision(this.player, this.newBonus)) {
+      switch (this.bonusChoice) {
+        case 0:
+          this.bonusFirePower();
+          break;
+        case 1:
+          this.bonusFireSpeed();
+      }
+    }
+  }
+
+  bonusFireSpeed(content) {
+    this.projectileSpeed = 50;
+    this.currentBonus = content;
+    console.log('bonusFireSpeed');
+  }
+
+  bonusFirePower() {
+    this.firePower = true;
+  }
+
+  bonusFirePowerOne() {
+    const projectile = new Projectile(null, null, this.player);
+
+    // Pour chaque projectiles, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
+    projectile.x = projectile.projectileX() + 50;
+    projectile.y = projectile.projectileY();
+    this.projectiles.push(projectile);
+  }
+  bonusFirePowerTwo() {
+    const projectile = new Projectile(null, null, this.player);
+
+    // Pour chaque projectiles, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
+    projectile.x = projectile.projectileX() - 50;
+    projectile.y = projectile.projectileY();
+    this.projectiles.push(projectile);
+  }
+
+  bonusFirePowerAction() {
+    this.bonusFirePowerOne();
+    this.bonusFirePowerTwo();
+  }
+
   destroyInvaders() {
     for (let i = 0; i < this.projectiles.length; i++) {
       const playerProjectile = this.projectiles[i];
@@ -297,6 +348,7 @@ class GameEngine {
           console.log('bonus tué');
           generateSound(soundArray[3].name, soundArray[3].src);
           playerProjectile.hasCollision = true;
+
           (this.newBonus.x = this.items[j].x),
             (this.newBonus.y = this.items[j].y);
           this.explosionInvaders(this.items[j]), this.projectiles.splice(i, 1);
@@ -365,6 +417,7 @@ class GameEngine {
     this.destroyInvaders();
     this.collisionBorder();
     this.dropBonus();
+    this.takeBonus();
     if (this.moveInvaders()) {
       this.player.x = prevX;
       this.player.y = prevY;
@@ -387,7 +440,7 @@ class GameEngine {
       }
     }
 
-    screen(this.player.lives, this.items, this.level);
+    screen(this.player.lives, this.items, this.level, this.currentBonus);
   }
 
   collisionBorder() {
@@ -470,11 +523,6 @@ class GameEngine {
     this.explosions.forEach((explosion) => {
       this.ctx.drawImage(explosion.getImg(), explosion.x, explosion.y);
     });
-  }
-
-  drawLives() {
-    const lives = document.getElementById('lives');
-    lives.innerText = `Vies: ${this.player.lives}`;
   }
 
   gameLoop() {
