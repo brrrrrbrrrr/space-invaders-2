@@ -214,7 +214,6 @@ class GameEngine {
 
   generateInvadersProjectiles = () => {
     clearInterval(this.intervalId);
-    console.log('THI ITEM', this.items);
     if (this.items.length !== 0) {
       this.intervalId = setInterval(() => {
         const selectInvaders = Math.floor(Math.random() * this.items.length);
@@ -243,10 +242,11 @@ class GameEngine {
           this.player.lives--;
           return true;
         } else if (this.player.lives === 1) {
+          this.gameOver("Tu n'as plus de vies !");
+          this.explosionInvaders(this.player);
           generateSound(soundArray[2].name, soundArray[2].src);
           generateSound(soundArray[5].name, soundArray[5].src);
           this.player.lives = 0;
-          this.gameOver("Tu n'as plus de vies !");
         }
       }
     }
@@ -309,6 +309,12 @@ class GameEngine {
       invaderProjectile.y += 3;
     }
 
+    if (!this.isGameOver) {
+      this.explosions = this.explosions.filter((explosion) => {
+        return !explosion.isFinished;
+      });
+    }
+
     // if (this.collisionItem()) {
     //     this.player.x = prevX
     //     this.player.y = prevY
@@ -321,9 +327,7 @@ class GameEngine {
       this.player.x = prevX;
       this.player.y = prevY;
     }
-    // if (this.invadersOnEarth || this.items.length === 0) {
-    //   this.resetGame();
-    // }
+
     if (this.invadersOnEarth) {
       this.gameOver('Les envahisseurs ont atteint la terre');
     }
@@ -340,11 +344,6 @@ class GameEngine {
         }
       }
     }
-    setTimeout(() => {
-      this.explosions = this.explosions.filter((explosion) => {
-        return !explosion.isFinished;
-      });
-    }, 8500);
 
     screen(this.player.lives, this.items, this.level);
   }
@@ -410,14 +409,19 @@ class GameEngine {
   }
 
   drawExplosions() {
+    if (this.isGameOver) {
+      this.explosions.forEach((explosion) => {
+        this.ctx.drawImage(
+          explosion.getImg(),
+          (explosion.x = this.player.x - this.player.width / 2),
+          (explosion.y = this.player.y - this.player.height / 2),
+          explosion.width,
+          explosion.height
+        );
+      });
+    }
     this.explosions.forEach((explosion) => {
-      this.ctx.drawImage(
-        explosion.getImg(),
-        explosion.x,
-        explosion.y
-        // explosion.width,
-        // explosion.height
-      );
+      this.ctx.drawImage(explosion.getImg(), explosion.x, explosion.y);
     });
   }
 
@@ -487,7 +491,6 @@ class GameEngine {
     this.isGameOver = true;
     clearInterval(this.intervalId);
     this.hasCollision = false;
-
     document.getElementById('titleMenu').innerText = 'GAME OVER';
     document.getElementById('contentMenu').innerText = contentMenu;
     document.getElementById('startBtn').innerText = 'Restart the Game';
