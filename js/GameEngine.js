@@ -7,6 +7,7 @@ import { soundArray } from './soundEffect.js';
 import { generateSound } from './soundEffect.js';
 import { screen } from './screen.js';
 import { Explosion } from './Explosion.js';
+import { Bonus } from './Bonus.js';
 
 class GameEngine {
   canvas = null;
@@ -57,6 +58,7 @@ class GameEngine {
     this.invadersSpeed = 1;
     this.bonusPosition = 0;
     this.isBonusDiscoverd = false;
+    this.newBonus = new Bonus(null, null);
   }
 
   initPlayer() {
@@ -294,6 +296,10 @@ class GameEngine {
           this.projectiles.splice(i, 1);
           this.items.splice(j, 1);
 
+          (this.newBonus.x = this.items[j].x),
+            (this.newBonus.y = this.items[j].y);
+
+          console.log('newBonus :', this.newBonus);
           return true;
         }
       }
@@ -409,6 +415,11 @@ class GameEngine {
       this.player.y,
       this.player.width,
       this.player.height
+    );
+    this.ctx.drawImage(
+      this.newBonus.getImg(),
+      this.newBonus.x,
+      this.newBonus.y
     );
 
     this.drawExplosions();
