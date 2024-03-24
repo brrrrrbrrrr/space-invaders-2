@@ -79,6 +79,7 @@ class GameEngine {
     if (this.items.length !== 0) {
       this.generateInvadersProjectiles();
     }
+    this.generateBonusPosition();
   }
 
   generateInvaders() {
@@ -211,6 +212,11 @@ class GameEngine {
   //     }
   //   }, 1000);
   // };
+
+  generateBonusPosition() {
+    const bonusPosition = Math.floor(Math.random() * this.items.length);
+    console.log('bonusPosition', bonusPosition);
+  }
 
   generateInvadersProjectiles = () => {
     clearInterval(this.intervalId);
