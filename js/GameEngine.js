@@ -58,6 +58,7 @@ class GameEngine {
     this.invadersSpeed = 1;
     this.bonusPosition = 0;
     this.isBonusDiscoverd = false;
+    this.isBonusTaken = false;
     this.newBonus = new Bonus(-100, -100, null, this.bonusChoice);
     this.currentBonus = null;
     this.firePower = false;
@@ -70,7 +71,9 @@ class GameEngine {
   }
 
   init() {
+    this.resetBonus();
     this.bonusChoice = Math.floor(Math.random() * this.bonusObj.length);
+    console.log('bonusObj.length', this.bonusObj.length);
 
     this.initPlayer();
     if (this.isGameOver) {
@@ -229,6 +232,7 @@ class GameEngine {
 
   generateBonusPosition() {
     this.bonusPosition = Math.floor(Math.random() * this.items.length);
+
     console.log('bonusPosition', this.bonusPosition);
     this.items[this.bonusPosition].isBonus = true;
     console.log('items :', this.items);
@@ -423,11 +427,13 @@ class GameEngine {
       this.player.width,
       this.player.height
     );
-    this.ctx.drawImage(
-      this.newBonus.getImg(),
-      this.newBonus.x,
-      this.newBonus.y
-    );
+    if (this.newBonus !== null) {
+      this.ctx.drawImage(
+        this.newBonus.getImg(),
+        this.newBonus.x,
+        this.newBonus.y
+      );
+    }
 
     this.drawExplosions();
     this.drawNewProjectile();
@@ -511,6 +517,7 @@ class GameEngine {
 
   //Configuration des modifications a ajouter pour le niveau suivant
   nextLevelConfig() {
+    this.resetBonus();
     this.invadersSpeed *= 1.5;
     this.level++;
     this.projectileSpeed++;
@@ -535,7 +542,7 @@ class GameEngine {
   gameOver(contentMenu) {
     this.isGameOver = true;
     clearInterval(this.intervalId);
-    this.hasCollision = false;
+    this.hasCollision = true;
     document.getElementById('titleMenu').innerText = 'GAME OVER';
     document.getElementById('contentMenu').innerText = contentMenu;
     document.getElementById('startBtn').innerText = 'Restart the Game';
@@ -544,13 +551,16 @@ class GameEngine {
 
   // Tableau et fonctions bonus
   dropBonus() {
-    if (this.isBonusDiscoverd) {
+    if (this.isBonusDiscoverd && !this.isBonusTaken) {
       this.newBonus.y += this.invadersSpeed;
     }
   }
 
   takeBonus() {
     if (collision(this.player, this.newBonus)) {
+      generateSound(soundArray[6].name, soundArray[6].src);
+      this.isBonusTaken = true;
+      this.newBonus.y = -100;
       this.bonusObj[this.bonusChoice].bonusEffect();
     }
   }
@@ -570,8 +580,16 @@ class GameEngine {
     },
   ];
 
+  resetBonus() {
+    this.firePower = false;
+    this.projectileSpeed = 10;
+    this.isBonusTaken = false;
+    this.isBonusDiscoverd = false;
+  }
+
   bonusFirePower() {
     this.firePower = true;
+    this.projectileSpeed = 10;
   }
 
   bonusFirePowerOne() {
