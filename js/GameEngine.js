@@ -58,20 +58,20 @@ class GameEngine {
     this.invadersSpeed = 1;
     this.bonusPosition = 0;
     this.isBonusDiscoverd = false;
-    this.bonusChoice = Math.floor(Math.random() * 2);
     this.newBonus = new Bonus(-100, -100, null, this.bonusChoice);
     this.currentBonus = null;
     this.firePower = false;
   }
 
   initPlayer() {
-    console.log('bonusChoice = ', this.bonusChoice);
     this.player = new Player();
     this.player.x = this.canvas.width / 2 - this.player.width / 2;
     this.player.y = this.canvas.height - this.player.height;
   }
 
   init() {
+    this.bonusChoice = Math.floor(Math.random() * this.bonusObj.length);
+
     this.initPlayer();
     if (this.isGameOver) {
       this.resetConfig();
@@ -273,56 +273,6 @@ class GameEngine {
       }
     }
     return false;
-  }
-
-  dropBonus() {
-    if (this.isBonusDiscoverd) {
-      this.newBonus.y += this.invadersSpeed;
-    }
-  }
-
-  takeBonus() {
-    if (collision(this.player, this.newBonus)) {
-      switch (this.bonusChoice) {
-        case 0:
-          this.bonusFirePower();
-          break;
-        case 1:
-          this.bonusFireSpeed();
-      }
-    }
-  }
-
-  bonusFireSpeed(content) {
-    this.projectileSpeed = 50;
-    this.currentBonus = content;
-    console.log('bonusFireSpeed');
-  }
-
-  bonusFirePower() {
-    this.firePower = true;
-  }
-
-  bonusFirePowerOne() {
-    const projectile = new Projectile(null, null, this.player);
-
-    // Pour chaque projectiles, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
-    projectile.x = projectile.projectileX() + 50;
-    projectile.y = projectile.projectileY();
-    this.projectiles.push(projectile);
-  }
-  bonusFirePowerTwo() {
-    const projectile = new Projectile(null, null, this.player);
-
-    // Pour chaque projectiles, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
-    projectile.x = projectile.projectileX() - 50;
-    projectile.y = projectile.projectileY();
-    this.projectiles.push(projectile);
-  }
-
-  bonusFirePowerAction() {
-    this.bonusFirePowerOne();
-    this.bonusFirePowerTwo();
   }
 
   destroyInvaders() {
@@ -590,6 +540,60 @@ class GameEngine {
     document.getElementById('contentMenu').innerText = contentMenu;
     document.getElementById('startBtn').innerText = 'Restart the Game';
     document.getElementById('menu').style = 'display: flex';
+  }
+
+  // Tableau et fonctions bonus
+  dropBonus() {
+    if (this.isBonusDiscoverd) {
+      this.newBonus.y += this.invadersSpeed;
+    }
+  }
+
+  takeBonus() {
+    if (collision(this.player, this.newBonus)) {
+      this.bonusObj[this.bonusChoice].bonusEffect();
+    }
+  }
+
+  bonusObj = [
+    {
+      bonusEffect: () => {
+        this.projectileSpeed = 50;
+        this.currentBonus = 'Pwet';
+      },
+    },
+    {
+      bonusEffect: () => {
+        this.bonusFirePower();
+        this.currentBonus = 'Pwet';
+      },
+    },
+  ];
+
+  bonusFirePower() {
+    this.firePower = true;
+  }
+
+  bonusFirePowerOne() {
+    const projectile = new Projectile(null, null, this.player);
+
+    // Pour chaque projectiles, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
+    projectile.x = projectile.projectileX() + 50;
+    projectile.y = projectile.projectileY();
+    this.projectiles.push(projectile);
+  }
+  bonusFirePowerTwo() {
+    const projectile = new Projectile(null, null, this.player);
+
+    // Pour chaque projectiles, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
+    projectile.x = projectile.projectileX() - 50;
+    projectile.y = projectile.projectileY();
+    this.projectiles.push(projectile);
+  }
+
+  bonusFirePowerAction() {
+    this.bonusFirePowerOne();
+    this.bonusFirePowerTwo();
   }
 }
 
