@@ -562,6 +562,7 @@ class GameEngine {
       this.isBonusTaken = true;
       this.newBonus.y = -100;
       this.bonusObj[this.bonusChoice].bonusEffect();
+      // this.bonusObj[3].bonusEffect();
     }
   }
 
@@ -569,22 +570,44 @@ class GameEngine {
     {
       bonusEffect: () => {
         this.projectileSpeed = 50;
-        this.currentBonus = 'Pwet';
+        this.currentBonus = 'SpeedFire';
       },
     },
     {
       bonusEffect: () => {
         this.bonusFirePower();
-        this.currentBonus = 'Pwet';
+        this.currentBonus = 'PowerFire';
+      },
+    },
+    {
+      bonusEffect: () => {
+        this.player.lives += +1;
+        this.currentBonus = 'OneLifeBonus';
+      },
+    },
+    {
+      bonusEffect: () => {
+        this.destroyAllInvaders();
+        this.currentBonus = 'NukeBonus';
       },
     },
   ];
+
+  destroyAllInvaders() {
+    generateSound(soundArray[3].name, soundArray[3].src);
+    for (let j = this.items.length - 1; j >= 0; j--) {
+      this.explosionInvaders(this.items[j]);
+      this.items.splice(j, 1);
+    }
+    return true;
+  }
 
   resetBonus() {
     this.firePower = false;
     this.projectileSpeed = 10;
     this.isBonusTaken = false;
     this.isBonusDiscoverd = false;
+    this.currentBonus = null;
   }
 
   bonusFirePower() {
