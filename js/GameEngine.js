@@ -63,6 +63,7 @@ class GameEngine {
     this.currentBonus = null;
     this.firePower = false;
     this.nbOfInvaders = 10;
+    this.rotation = 0;
   }
 
   initPlayer() {
@@ -308,12 +309,14 @@ class GameEngine {
   update() {
     let prevX = this.player.x;
     let prevY = this.player.y;
-
+    this.rotation = 0;
     if (this.keys.left) {
       this.player.x -= this.speed;
+      this.rotation = -0.3;
     }
     if (this.keys.right) {
       this.player.x += this.speed;
+      this.rotation = +0.3;
     }
 
     this.projectiles = this.projectiles.filter(
@@ -373,10 +376,10 @@ class GameEngine {
     }
 
     screen(
-        this.player.lives,
-        this.items,
-        this.level,
-        this.currentBonus ? this.currentBonus : "Aucun"
+      this.player.lives,
+      this.items,
+      this.level,
+      this.currentBonus ? this.currentBonus : 'Aucun'
     );
   }
 
@@ -394,6 +397,25 @@ class GameEngine {
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.save();
+    this.ctx.translate(
+      this.player.x + this.player.width / 2,
+      this.player.y + this.player.height / 2
+    );
+    this.ctx.rotate(this.rotation);
+    this.ctx.translate(
+      -this.player.x - this.player.width / 2,
+      -this.player.y - this.player.height / 2
+    );
+    this.ctx.drawImage(
+      this.player.getImg(),
+      this.player.x,
+      this.player.y,
+      this.player.width,
+      this.player.height
+    );
+
+    this.ctx.restore();
     for (let item of this.items) {
       this.ctx.drawImage(
         item.getImg(),
@@ -403,13 +425,7 @@ class GameEngine {
         item.height
       );
     }
-    this.ctx.drawImage(
-      this.player.getImg(),
-      this.player.x,
-      this.player.y,
-      this.player.width,
-      this.player.height
-    );
+
     if (this.newBonus !== null) {
       this.ctx.drawImage(
         this.newBonus.getImg(),
