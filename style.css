@@ -28,6 +28,7 @@
 
 body{
   background: var(--clr-5);
+  overflow-y: hidden;
  
 }
 
