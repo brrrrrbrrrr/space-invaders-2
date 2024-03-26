@@ -62,6 +62,7 @@ class GameEngine {
     this.newBonus = new Bonus(-100, -100, null, this.bonusChoice);
     this.currentBonus = null;
     this.firePower = false;
+    this.nbOfInvaders = 10;
   }
 
   initPlayer() {
@@ -94,11 +95,10 @@ class GameEngine {
   }
 
   generateInvaders() {
-    let count = 10;
     let invaderHeight = this.invader.height;
     let espacement = invaderHeight * 2;
 
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < this.nbOfInvaders; i++) {
       let newInvader = new Invaders(
         Math.random() * (this.canvas.width - this.invader.width),
         -50 - i * espacement,
@@ -494,17 +494,30 @@ class GameEngine {
   }
 
   //Configuration des modifications a ajouter pour le niveau suivant
+
   nextLevelConfig() {
+    let incrSpeed = 1.5;
+    let incrInvaders = 1;
+    let incrInvadersSpeed = 0.5;
+    if (this.level > 5) {
+      incrSpeed = 0;
+      incrInvadersSpeed = 0.1;
+    }
     this.resetBonus();
-    this.invadersSpeed *= 1.5;
-    this.level++;
-    this.projectileSpeed++;
-    this.speed *= 1.5;
+    this.nbOfInvaders += incrInvaders;
+    this.speed += incrSpeed;
+    this.invadersSpeed += incrInvadersSpeed;
     this.player.lives = 3;
     this.projectiles = [];
+    this.level++;
+
+    console.log('this projectile speed :', this.projectileSpeed);
+    console.log('thisspeed :', this.speed);
+    console.log('invadersSpeed =', this.invadersSpeed);
   }
 
   resetConfig() {
+    this.nbOfInvaders = 10;
     this.level = 1;
     this.player.lives = 3;
     this.speed = 5;
