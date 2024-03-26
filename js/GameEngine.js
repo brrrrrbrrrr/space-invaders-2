@@ -510,10 +510,6 @@ class GameEngine {
     this.player.lives = 3;
     this.projectiles = [];
     this.level++;
-
-    console.log('this projectile speed :', this.projectileSpeed);
-    console.log('thisspeed :', this.speed);
-    console.log('invadersSpeed =', this.invadersSpeed);
   }
 
   resetConfig() {
