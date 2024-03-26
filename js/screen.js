@@ -7,10 +7,11 @@ function screen(playerLives, invadersObj, currentLevel, currentBonus) {
   const toKill = document.getElementById('toKill');
   toKill.innerText = `À tuer : ${invadersObj.length}`;
 
-  // TODO: Display level count in bottom container screen
+  // Display level count in bottom container screen
   const level = document.getElementById('level');
   level.innerText = `Niveau : ${currentLevel}`;
 
+  // Display bonus name in bottom container screen
   const bonus = document.getElementById('bonus');
   bonus.innerText = `Bonus : ${currentBonus}`;
 }
