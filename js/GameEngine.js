@@ -372,7 +372,12 @@ class GameEngine {
       }
     }
 
-    screen(this.player.lives, this.items, this.level, this.currentBonus);
+    screen(
+        this.player.lives,
+        this.items,
+        this.level,
+        this.currentBonus ? this.currentBonus : "Aucun"
+    );
   }
 
   collisionBorder() {
