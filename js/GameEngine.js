@@ -1,12 +1,13 @@
-import { Player } from "./Player.js";
-import { Invaders } from "./Invaders.js";
-import { collision } from "./Collision.js";
-import { Projectile } from "./Projectile.js";
-import { InvaderProjectile } from "./InvaderProjectile.js";
-import { soundArray } from "./soundEffect.js";
-import { generateSound } from "./soundEffect.js";
-import { screen } from "./screen.js";
-import { Explosion } from "./Explosion.js";
+import { Player } from './Player.js';
+import { Invaders } from './Invaders.js';
+import { collision } from './Collision.js';
+import { Projectile } from './Projectile.js';
+import { InvaderProjectile } from './InvaderProjectile.js';
+import { soundArray } from './soundEffect.js';
+import { generateSound } from './soundEffect.js';
+import { screen } from './screen.js';
+import { Explosion } from './Explosion.js';
+import { Bonus } from './Bonus.js';
 
 class GameEngine {
   canvas = null;
@@ -19,13 +20,14 @@ class GameEngine {
   lastFrameTime = null;
   fpsInterval = null;
   invadersOnEarth = null;
-  button = document.getElementById("startBtn");
-
+  button = document.getElementById('startBtn');
+  isGameOver = null;
   projectileSpeed = null;
   invaderProjectiles = [];
   explosions = [];
   //Liste de projectiles des invaders
   intervalId = null;
+  bonusPosition = null;
 
   keys = {
     up: false,
@@ -40,33 +42,55 @@ class GameEngine {
   invadersSpeed = null;
 
   constructor() {
-    this.canvas = document.getElementById("game");
-    this.ctx = this.canvas.getContext("2d");
+    this.canvas = document.getElementById('game');
+    this.ctx = this.canvas.getContext('2d');
     this.canvas.width = innerWidth;
     this.canvas.height = innerHeight;
     this.invader = new Invaders();
-    this.player = new Player();
-    this.player.x = this.canvas.width / 2 - this.player.width / 2;
-    this.player.y = this.canvas.height - this.player.height;
+    this.isGameOver = false;
     this.level = 1;
     this.lastFrameTime = performance.now();
     this.fpsInterval = 1000 / 100; //
-
     this.invadersOnEarth = false;
     this.projectileSpeed = 10;
     this.speed = 5;
     this.startSound = true;
+    this.invadersSpeed = 1;
+    this.bonusPosition = 0;
+    this.isBonusDiscoverd = false;
+    this.isBonusTaken = false;
+    this.newBonus = new Bonus(-100, -100, null, this.bonusChoice);
+    this.currentBonus = null;
+    this.firePower = false;
+  }
+
+  initPlayer() {
+    this.player = new Player();
+    this.player.x = this.canvas.width / 2 - this.player.width / 2;
+    this.player.y = this.canvas.height - this.player.height;
   }
 
   init() {
-    if (this.button.textContent === "Niveau suivant") {
-      this.nextLevelConfig();
+    this.resetBonus();
+    this.bonusChoice = Math.floor(Math.random() * this.bonusObj.length);
+
+    this.initPlayer();
+    if (this.isGameOver) {
+      this.resetConfig();
+      this.isGameOver = false;
+    } else {
+      if (this.button.textContent === 'Niveau suivant') {
+        this.nextLevelConfig();
+      }
     }
 
     this.invadersOnEarth = false;
-    this.initEvent();
+
     this.generateInvaders();
-    this.generateInvadersProjectiles();
+    if (this.items.length !== 0) {
+      this.generateInvadersProjectiles();
+    }
+    this.generateBonusPosition();
   }
 
   generateInvaders() {
@@ -79,8 +103,10 @@ class GameEngine {
         Math.random() * (this.canvas.width - this.invader.width),
         -50 - i * espacement,
         Math.random() < 0.5 ? -1 : 1,
-        0.5
+        0.5,
+        false
       );
+
       this.items.push(newInvader);
     }
   }
@@ -102,7 +128,7 @@ class GameEngine {
           this.invadersOnEarth = true;
           invader.y = this.canvas.height - invader.height;
           this.invadersSpeed = 0;
-          this.gameOver("La Terre a été envahie !!!");
+          this.gameOver('La Terre a été envahie !!!');
         }
         // va permettre la collision de chaque élément du tableau
         if (collision(this.player, invader)) {
@@ -126,42 +152,45 @@ class GameEngine {
   }
 
   initEvent() {
-    window.addEventListener("keydown", (event) => {
+    window.addEventListener('keydown', (event) => {
       switch (event.key) {
-        case "ArrowLeft":
+        case 'ArrowLeft':
           this.keys.left = true;
           break;
-        case "ArrowRight":
+        case 'ArrowRight':
           this.keys.right = true;
           break;
-        case " ":
+        case ' ':
           this.keys.space = true;
           break;
         //Ajout d'une touche pour supprimer tous les invaders, pour tester le niveau suivant
-        case "p":
+        case 'p':
           this.keys.p = true;
           break;
       }
     });
 
-    window.addEventListener("keyup", (event) => {
+    window.addEventListener('keyup', (event) => {
       switch (event.key) {
-        case "ArrowLeft":
+        case 'ArrowLeft':
           this.keys.left = false;
           break;
-        case "ArrowRight":
+        case 'ArrowRight':
           this.keys.right = false;
           break;
-        case " ":
-          if (this.player.lives > 0) {
+        case ' ':
+          if (!this.isGameOver) {
             this.keys.space = false;
 
             this.newProjectile();
+            if (this.firePower) {
+              this.bonusFirePowerAction();
+            }
           }
 
           break;
         //Ajout d'une touche pour supprimer tous les invaders, pour tester le niveau suivant
-        case "p":
+        case 'p':
           this.keys.p = false;
           break;
       }
@@ -184,35 +213,26 @@ class GameEngine {
     }
   };
 
-  // generateInvadersProjectiles = () => {
-  // this.intervalId = setInterval(() => {
-  //     for (let invader of this.items) {
-  //       const invaderProjectile = new InvaderProjectile(
-  //         invader.x,
-  //         invader.y,
-  //         5,
-  //         -100,
-  //         invader.getImg().width / 2
-  //       );
-  //       console.log(invaderProjectile, 'invaderProjectile');
-  //       this.invaderProjectiles.push(invaderProjectile);
-  //     }
-  //   }, 1000);
-  // };
+  generateBonusPosition() {
+    this.bonusPosition = Math.floor(Math.random() * this.items.length);
+    this.items[this.bonusPosition].isBonus = true;
+  }
 
   generateInvadersProjectiles = () => {
     clearInterval(this.intervalId);
-    this.intervalId = setInterval(() => {
-      const selectInvaders = Math.floor(Math.random() * this.items.length);
-      const invaderProjectile = new InvaderProjectile(
-        this.items[selectInvaders].x,
-        this.items[selectInvaders].y,
-        5,
-        -100,
-        this.items[selectInvaders].getImg().width / 2
-      );
-      this.invaderProjectiles.push(invaderProjectile);
-    }, 1000);
+    if (this.items.length !== 0) {
+      this.intervalId = setInterval(() => {
+        const selectInvaders = Math.floor(Math.random() * this.items.length);
+        const invaderProjectile = new InvaderProjectile(
+          this.items[selectInvaders]?.x,
+          this.items[selectInvaders]?.y,
+          5,
+          -100,
+          this.items[selectInvaders]?.getImg().width / 2
+        );
+        this.invaderProjectiles.push(invaderProjectile);
+      }, 1000);
+    }
   };
 
   //*******************************DESTRUCTION PLAYER ET INVADERS ***************************************//
@@ -228,10 +248,11 @@ class GameEngine {
           this.player.lives--;
           return true;
         } else if (this.player.lives === 1) {
+          this.gameOver("Tu n'as plus de vies !");
+          this.explosionInvaders(this.player);
           generateSound(soundArray[2].name, soundArray[2].src);
           generateSound(soundArray[5].name, soundArray[5].src);
           this.player.lives = 0;
-          this.gameOver("Tu n'as plus de vies !");
         }
       }
     }
@@ -242,12 +263,31 @@ class GameEngine {
     for (let i = 0; i < this.projectiles.length; i++) {
       const playerProjectile = this.projectiles[i];
       for (let j = 0; j < this.items.length; j++) {
-        if (collision(playerProjectile, this.items[j])) {
+        if (
+          collision(playerProjectile, this.items[j]) &&
+          this.items[j].isBonus === false
+        ) {
           generateSound(soundArray[3].name, soundArray[3].src);
           playerProjectile.hasCollision = true;
           this.explosionInvaders(this.items[j]), this.projectiles.splice(i, 1);
           this.projectiles.splice(i, 1);
           this.items.splice(j, 1);
+
+          return true;
+        } else if (
+          collision(playerProjectile, this.items[j]) &&
+          this.items[j].isBonus === true
+        ) {
+          this.isBonusDiscoverd = true;
+          generateSound(soundArray[3].name, soundArray[3].src);
+          playerProjectile.hasCollision = true;
+
+          (this.newBonus.x = this.items[j].x),
+            (this.newBonus.y = this.items[j].y);
+          this.explosionInvaders(this.items[j]), this.projectiles.splice(i, 1);
+          this.projectiles.splice(i, 1);
+          this.items.splice(j, 1);
+
           return true;
         }
       }
@@ -294,6 +334,12 @@ class GameEngine {
       invaderProjectile.y += 3;
     }
 
+    if (!this.isGameOver) {
+      this.explosions = this.explosions.filter((explosion) => {
+        return !explosion.isFinished;
+      });
+    }
+
     // if (this.collisionItem()) {
     //     this.player.x = prevX
     //     this.player.y = prevY
@@ -302,15 +348,15 @@ class GameEngine {
     this.destroyPlayer();
     this.destroyInvaders();
     this.collisionBorder();
+    this.dropBonus();
+    this.takeBonus();
     if (this.moveInvaders()) {
       this.player.x = prevX;
       this.player.y = prevY;
     }
-    // if (this.invadersOnEarth || this.items.length === 0) {
-    //   this.resetGame();
-    // }
+
     if (this.invadersOnEarth) {
-      this.gameOver("Les envahisseurs ont atteint la terre");
+      this.gameOver('Les envahisseurs ont atteint la terre');
     }
     if (this.items.length === 0) {
       this.nextLevel();
@@ -325,13 +371,8 @@ class GameEngine {
         }
       }
     }
-    setTimeout(() => {
-      this.explosions = this.explosions.filter((explosion) => {
-        return !explosion.isFinished;
-      });
-    }, 8500);
 
-    screen(this.player.lives, this.items, this.level);
+    screen(this.player.lives, this.items, this.level, this.currentBonus);
   }
 
   collisionBorder() {
@@ -364,6 +405,13 @@ class GameEngine {
       this.player.width,
       this.player.height
     );
+    if (this.newBonus !== null) {
+      this.ctx.drawImage(
+        this.newBonus.getImg(),
+        this.newBonus.x,
+        this.newBonus.y
+      );
+    }
 
     this.drawExplosions();
     this.drawNewProjectile();
@@ -392,24 +440,23 @@ class GameEngine {
         invaderProjectile.height
       );
     });
-    //   this.ctx.drawImage(this.player.getImg(), this.player.x, this.player.y);
   }
 
   drawExplosions() {
+    if (this.isGameOver) {
+      this.explosions.forEach((explosion) => {
+        this.ctx.drawImage(
+          explosion.getImg(),
+          (explosion.x = this.player.x - this.player.width / 2),
+          (explosion.y = this.player.y - this.player.height / 2),
+          explosion.width,
+          explosion.height
+        );
+      });
+    }
     this.explosions.forEach((explosion) => {
-      this.ctx.drawImage(
-        explosion.getImg(),
-        explosion.x,
-        explosion.y
-        // explosion.width,
-        // explosion.height
-      );
+      this.ctx.drawImage(explosion.getImg(), explosion.x, explosion.y);
     });
-  }
-
-  drawLives() {
-    const lives = document.getElementById("lives");
-    lives.innerText = `Vies: ${this.player.lives}`;
   }
 
   gameLoop() {
@@ -429,10 +476,9 @@ class GameEngine {
   }
 
   run() {
-    // generateSound(soundArray[4].name, soundArray[4].src);
-
-    this.resetConfig();
     this.init();
+    this.initEvent();
+
     this.gameLoop();
   }
 
@@ -440,15 +486,16 @@ class GameEngine {
   nextLevel() {
     this.projectiles = [];
     this.invaderProjectiles = [];
-    document.getElementById("titleMenu").innerText = "BRAVO";
-    document.getElementById("contentMenu").innerText =
-      "Vous avez tué tous les envahisseurs !!!";
-    document.getElementById("startBtn").innerText = "Niveau suivant";
-    document.getElementById("menu").style = "display: flex";
+    document.getElementById('titleMenu').innerText = 'BRAVO';
+    document.getElementById('contentMenu').innerText =
+      'Vous avez tué tous les envahisseurs !!!';
+    document.getElementById('startBtn').innerText = 'Niveau suivant';
+    document.getElementById('menu').style = 'display: flex';
   }
 
   //Configuration des modifications a ajouter pour le niveau suivant
   nextLevelConfig() {
+    this.resetBonus();
     this.invadersSpeed *= 1.5;
     this.level++;
     this.projectileSpeed++;
@@ -458,6 +505,7 @@ class GameEngine {
   }
 
   resetConfig() {
+    this.level = 1;
     this.player.lives = 3;
     this.speed = 5;
     this.items = [];
@@ -470,13 +518,101 @@ class GameEngine {
   }
 
   gameOver(contentMenu) {
+    this.isGameOver = true;
     clearInterval(this.intervalId);
-    this.hasCollision = false;
+    this.hasCollision = true;
+    document.getElementById('titleMenu').innerText = 'GAME OVER';
+    document.getElementById('contentMenu').innerText = contentMenu;
+    document.getElementById('startBtn').innerText = 'Restart the Game';
+    document.getElementById('menu').style = 'display: flex';
+  }
 
-    document.getElementById("titleMenu").innerText = "GAME OVER";
-    document.getElementById("contentMenu").innerText = contentMenu;
-    document.getElementById("startBtn").innerText = "Restart the Game";
-    document.getElementById("menu").style = "display: flex";
+  // Tableau et fonctions bonus
+  dropBonus() {
+    if (this.isBonusDiscoverd && !this.isBonusTaken) {
+      this.newBonus.y += this.invadersSpeed;
+    }
+  }
+
+  takeBonus() {
+    if (collision(this.player, this.newBonus)) {
+      generateSound(soundArray[6].name, soundArray[6].src);
+      this.isBonusTaken = true;
+      this.newBonus.y = -100;
+      this.bonusObj[this.bonusChoice].bonusEffect();
+      // this.bonusObj[3].bonusEffect();
+    }
+  }
+
+  bonusObj = [
+    {
+      bonusEffect: () => {
+        this.projectileSpeed = 50;
+        this.currentBonus = 'SpeedFire';
+      },
+    },
+    {
+      bonusEffect: () => {
+        this.bonusFirePower();
+        this.currentBonus = 'PowerFire';
+      },
+    },
+    {
+      bonusEffect: () => {
+        this.player.lives += +1;
+        this.currentBonus = 'OneLifeBonus';
+      },
+    },
+    {
+      bonusEffect: () => {
+        this.destroyAllInvaders();
+        this.currentBonus = 'NukeBonus';
+      },
+    },
+  ];
+
+  destroyAllInvaders() {
+    generateSound(soundArray[3].name, soundArray[3].src);
+    for (let j = this.items.length - 1; j >= 0; j--) {
+      this.explosionInvaders(this.items[j]);
+      this.items.splice(j, 1);
+    }
+    return true;
+  }
+
+  resetBonus() {
+    this.firePower = false;
+    this.projectileSpeed = 10;
+    this.isBonusTaken = false;
+    this.isBonusDiscoverd = false;
+    this.currentBonus = null;
+  }
+
+  bonusFirePower() {
+    this.firePower = true;
+    this.projectileSpeed = 10;
+  }
+
+  bonusFirePowerOne() {
+    const projectile = new Projectile(null, null, this.player);
+
+    // Pour chaque projectiles, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
+    projectile.x = projectile.projectileX() + 50;
+    projectile.y = projectile.projectileY();
+    this.projectiles.push(projectile);
+  }
+  bonusFirePowerTwo() {
+    const projectile = new Projectile(null, null, this.player);
+
+    // Pour chaque projectiles, on initialise correctement les valeurs pour que le point de depart soit le milieu du vaisseau
+    projectile.x = projectile.projectileX() - 50;
+    projectile.y = projectile.projectileY();
+    this.projectiles.push(projectile);
+  }
+
+  bonusFirePowerAction() {
+    this.bonusFirePowerOne();
+    this.bonusFirePowerTwo();
   }
 }
 

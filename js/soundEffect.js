@@ -29,6 +29,11 @@ const soundArray = [
     name: 'spaceshipExplosion',
     src: '../assets/sounds/spaceship-explosion.mp3',
   },
+  {
+    id: 7,
+    name: 'bonus',
+    src: '../assets/sounds/bonus.mp3',
+  },
 ];
 
 const generateSound = (name, src) => {
