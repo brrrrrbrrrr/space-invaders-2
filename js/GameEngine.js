@@ -73,7 +73,6 @@ class GameEngine {
   init() {
     this.resetBonus();
     this.bonusChoice = Math.floor(Math.random() * this.bonusObj.length);
-    console.log('bonusObj.length', this.bonusObj.length);
 
     this.initPlayer();
     if (this.isGameOver) {
@@ -107,7 +106,7 @@ class GameEngine {
         0.5,
         false
       );
-      console.log(newInvader);
+
       this.items.push(newInvader);
     }
   }
@@ -214,28 +213,9 @@ class GameEngine {
     }
   };
 
-  // generateInvadersProjectiles = () => {
-  // this.intervalId = setInterval(() => {
-  //     for (let invader of this.items) {
-  //       const invaderProjectile = new InvaderProjectile(
-  //         invader.x,
-  //         invader.y,
-  //         5,
-  //         -100,
-  //         invader.getImg().width / 2
-  //       );
-  //       console.log(invaderProjectile, 'invaderProjectile');
-  //       this.invaderProjectiles.push(invaderProjectile);
-  //     }
-  //   }, 1000);
-  // };
-
   generateBonusPosition() {
     this.bonusPosition = Math.floor(Math.random() * this.items.length);
-
-    console.log('bonusPosition', this.bonusPosition);
     this.items[this.bonusPosition].isBonus = true;
-    console.log('items :', this.items);
   }
 
   generateInvadersProjectiles = () => {
@@ -299,7 +279,6 @@ class GameEngine {
           this.items[j].isBonus === true
         ) {
           this.isBonusDiscoverd = true;
-          console.log('bonus tué');
           generateSound(soundArray[3].name, soundArray[3].src);
           playerProjectile.hasCollision = true;
 
@@ -309,7 +288,6 @@ class GameEngine {
           this.projectiles.splice(i, 1);
           this.items.splice(j, 1);
 
-          console.log('newBonus :', this.newBonus);
           return true;
         }
       }
