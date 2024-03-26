@@ -22,36 +22,38 @@
   --clr-3: #0e4b50;
   --clr-4: #2d8f85;
   --clr-5: #606ebf;
-  --clr-6:#C2C4F2;
-  --clr-7:#3C3E73
+  --clr-6: #c2c4f2;
+  --clr-7: #3c3e73;
+  --clr-8: white;
+  --clr-9: black;
 }
 
-body{
+body {
   background: var(--clr-5);
   overflow-y: hidden;
- 
 }
 
 canvas {
-    position: relative;
-    background: url("./assets/images/Space.png") repeat 0 0;
-    width: 100%;
-    height: 90vh;
-    animation: galaxy 50s linear infinite;
+  position: relative;
+  background: url('./assets/images/Space.png') repeat 0 0;
+  width: 100%;
+  height: 90vh;
+  animation: galaxy 50s linear infinite;
 }
 
 @keyframes galaxy {
-    from { background-position: 0 0 }
-    to {  background-position: 0 100vh }
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 100vh;
+  }
 }
 
 #menu {
   position: absolute;
-  /* width: 100%;
-    height: 100%; */
-  width: 600px;
-  height: 500px;
-  /* background-color: rgba(0, 136, 91, 0.42); */
+  width: 80%;
+  height: auto;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -62,22 +64,21 @@ canvas {
   padding: 50px;
   transform: translate(-50%, -50%);
   border-radius: 1.5rem;
-  background: var(--clr-1);
   gap: 20px;
 }
 
 #menu::after {
   content: '';
+
   position: absolute;
   inset: -0.5rem;
-  background: var(--clr-5);
-  background: conic-gradient(
+   background: conic-gradient(
     from var(--gradient-angle),
-    var(--clr-3),
     var(--clr-4),
-    var(--clr-5),
+    var(--clr-7),
     var(--clr-4),
-    var(--clr-3)
+    var(--clr-7),
+    var(--clr-4)
   );
   animation: rotation 20s linear infinite;
   border-radius: 1.5rem;
@@ -89,32 +90,43 @@ canvas {
   z-index: 2;
 }
 
+#contentMenu {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  color: var(--clr-8);
+  text-shadow: 2px 2px 0 var(--clr-9);
+  font-size: 30px;
+  line-height: normal;
+}
+
 #startBtn {
   padding: 12px;
+  font-size: 20px;
   border-radius: 20px;
   background-color: var(--clr-5);
- position:relative;
+   position: relative;
   cursor: pointer;
   outline: none;
-  box-shadow: 0 6px var(--clr-7);
-  border:none;
-  
+  box-shadow: 0px 6px var(--clr-7);
+  border: 1px solid var(--clr-7);
+  text-shadow: 1px 1px 0 var(--clr-7);
 }
 
-#startBtn:hover{
-  box-shadow:0 4px var(--clr-7);
+#startBtn:hover {
+  box-shadow: 0 4px var(--clr-7);
   top: 2px;
-  color:var(--clr-6);
- 
+  color: var(--clr-8);
 }
 
-#startBtn:active{
-  box-shadow:0 0px var(--clr-7);
+#startBtn:active {
+  box-shadow: 0 0px var(--clr-7);
   top: 6px;
 }
 
 #titleMenu {
-  font-size: 40px;
+  font-size: 70px;
+  text-shadow: 3px 3px 0 var(--clr-6);
 }
 
 #menu::after {
@@ -131,21 +143,18 @@ canvas {
 }
 
 #bottom-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    height: 10vh;
-    /* width: 100vw; */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  height: 10vh;
 
-    background: var(--clr-5);
-   
-   
- 
+
+  background: var(--clr-5);
 }
 
 .data {
-    font-size: 25px;
-    margin-left: 1rem;
+  font-size: 25px;
+  margin-left: 1rem;
 }
