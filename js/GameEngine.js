@@ -62,6 +62,8 @@ class GameEngine {
     this.newBonus = new Bonus(-100, -100, null, this.bonusChoice);
     this.currentBonus = null;
     this.firePower = false;
+    this.nbOfInvaders = 10;
+    this.rotation = 0;
   }
 
   initPlayer() {
@@ -94,11 +96,10 @@ class GameEngine {
   }
 
   generateInvaders() {
-    let count = 10;
     let invaderHeight = this.invader.height;
     let espacement = invaderHeight * 2;
 
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < this.nbOfInvaders; i++) {
       let newInvader = new Invaders(
         Math.random() * (this.canvas.width - this.invader.width),
         -50 - i * espacement,
@@ -308,12 +309,14 @@ class GameEngine {
   update() {
     let prevX = this.player.x;
     let prevY = this.player.y;
-
+    this.rotation = 0;
     if (this.keys.left) {
       this.player.x -= this.speed;
+      this.rotation = -0.3;
     }
     if (this.keys.right) {
       this.player.x += this.speed;
+      this.rotation = +0.3;
     }
 
     this.projectiles = this.projectiles.filter(
@@ -372,7 +375,12 @@ class GameEngine {
       }
     }
 
-    screen(this.player.lives, this.items, this.level, this.currentBonus);
+    screen(
+      this.player.lives,
+      this.items,
+      this.level,
+      this.currentBonus ? this.currentBonus : 'Aucun'
+    );
   }
 
   collisionBorder() {
@@ -389,6 +397,25 @@ class GameEngine {
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.save();
+    this.ctx.translate(
+      this.player.x + this.player.width / 2,
+      this.player.y + this.player.height / 2
+    );
+    this.ctx.rotate(this.rotation);
+    this.ctx.translate(
+      -this.player.x - this.player.width / 2,
+      -this.player.y - this.player.height / 2
+    );
+    this.ctx.drawImage(
+      this.player.getImg(),
+      this.player.x,
+      this.player.y,
+      this.player.width,
+      this.player.height
+    );
+
+    this.ctx.restore();
     for (let item of this.items) {
       this.ctx.drawImage(
         item.getImg(),
@@ -398,13 +425,7 @@ class GameEngine {
         item.height
       );
     }
-    this.ctx.drawImage(
-      this.player.getImg(),
-      this.player.x,
-      this.player.y,
-      this.player.width,
-      this.player.height
-    );
+
     if (this.newBonus !== null) {
       this.ctx.drawImage(
         this.newBonus.getImg(),
@@ -494,17 +515,26 @@ class GameEngine {
   }
 
   //Configuration des modifications a ajouter pour le niveau suivant
+
   nextLevelConfig() {
+    let incrSpeed = 1.5;
+    let incrInvaders = 1;
+    let incrInvadersSpeed = 0.5;
+    if (this.level > 5) {
+      incrSpeed = 0;
+      incrInvadersSpeed = 0.1;
+    }
     this.resetBonus();
-    this.invadersSpeed *= 1.5;
-    this.level++;
-    this.projectileSpeed++;
-    this.speed *= 1.5;
+    this.nbOfInvaders += incrInvaders;
+    this.speed += incrSpeed;
+    this.invadersSpeed += incrInvadersSpeed;
     this.player.lives = 3;
     this.projectiles = [];
+    this.level++;
   }
 
   resetConfig() {
+    this.nbOfInvaders = 10;
     this.level = 1;
     this.player.lives = 3;
     this.speed = 5;
