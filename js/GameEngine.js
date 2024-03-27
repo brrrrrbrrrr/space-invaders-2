@@ -73,6 +73,7 @@ class GameEngine {
   }
 
   init() {
+     this.showTutorial();
     this.resetBonus();
     this.bonusChoice = Math.floor(Math.random() * this.bonusObj.length);
 
@@ -497,16 +498,15 @@ class GameEngine {
   }
 
   run() {
-    this.showTutorial();
     this.init();
     this.initEvent();
-
     this.gameLoop();
+    
   }
 
   showTutorial() {
     const tutorialText = `
-        <p>Utilisez <img src="./assets/images/arrow-left.png" class="move-img moving"> et <img src="./assets/images/arrow-right.png" class="move-img moving" id="right-arrow"> pour vous déplacer</p>
+        <p>Utilisez <img src="./assets/images/arrow-left.png" class="move-img"id="arrow-left"> et <img src="./assets/images/arrow-right.png" class="move-img" id="arrow-right"> pour vous déplacer</p>
         <p>Appuyez sur <img src="./assets/images/espace-key.png"> pour tirer</p>
     `;
     const tutorialElement = document.getElementById("tutorial");
@@ -516,6 +516,11 @@ class GameEngine {
     tutorialElement.style.alignItems = "center";
     tutorialElement.innerHTML = tutorialText;
     tutorialElement.classList.add("fade-out");
+    setTimeout(()=>{
+      tutorialElement.style.display= "none";
+    },5500)
+
+    
   }
 
   //Création d'une fonction nextLevel qui aura le comportement suivant si elle est call
@@ -560,6 +565,7 @@ class GameEngine {
     this.hasCollision = false;
     this.projectileSpeed = 10;
     this.level = 1;
+   
   }
 
   gameOver(contentMenu) {

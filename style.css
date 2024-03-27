@@ -215,29 +215,34 @@ canvas {
 
 #tutorial img {
   padding: 1rem;
-  /* height: 2rem; */
+ 
 }
 .move-img {
-  transition: transform 2s; /* Ajouter une transition pour l'effet de déplacement */
+  transition: transform 2s; 
 }
 
-/* .moving {
-  transform: translateY(-5px); 
-} */
-
-.move-img.moving {
-  animation: pressAnimation 0.6s alternate infinite;
+.move-img#arrow-left {
+  animation: pressAnimationLeft 0.5s alternate infinite;
 }
-.move-img#right-arrow {
-  animation: pressAnimation 0.6s alternate infinite;
+.move-img#arrow-right {
+  animation: pressAnimationRight 0.5s alternate infinite;
 }
 
-@keyframes pressAnimation {
+
+@keyframes pressAnimationLeft {
   from {
       transform: scale(1);
   }
   to {
       transform: scale(0.9);
+  }
+}
+@keyframes pressAnimationRight {
+  from {
+      transform: scale(0.9);
+  }
+  to {
+      transform: scale(1);
   }
 }
 @keyframes fadeOut {
@@ -250,5 +255,5 @@ canvas {
 }
 
 .fade-out {
-  animation: fadeOut 8s ease forwards;
+  animation: fadeOut 5.5s ease forwards;
 }
