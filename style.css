@@ -29,7 +29,7 @@
 }
 
 body {
-  background: var(--clr-5);
+  background: var(--clr-9);
   overflow-y: hidden;
 }
 
@@ -150,8 +150,8 @@ canvas {
   justify-content: center;
   height: 10vh;
   /* width: 100vw; */
-
-  background: var(--clr-5);
+color: var(--clr-8);
+  background: var(--clr-9);
 }
 
 .data {
