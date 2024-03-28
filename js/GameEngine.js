@@ -73,7 +73,6 @@ class GameEngine {
   }
 
   init() {
-     this.showTutorial();
     this.resetBonus();
     this.bonusChoice = Math.floor(Math.random() * this.bonusObj.length);
 
@@ -501,7 +500,7 @@ class GameEngine {
     this.init();
     this.initEvent();
     this.gameLoop();
-    
+    this.showTutorial();
   }
 
   showTutorial() {
@@ -516,11 +515,9 @@ class GameEngine {
     tutorialElement.style.alignItems = "center";
     tutorialElement.innerHTML = tutorialText;
     tutorialElement.classList.add("fade-out");
-    setTimeout(()=>{
-      tutorialElement.style.display= "none";
-    },7000)
-
-    
+    setTimeout(() => {
+      tutorialElement.style.display = "none";
+    }, 7000);
   }
 
   //Création d'une fonction nextLevel qui aura le comportement suivant si elle est call
@@ -565,7 +562,6 @@ class GameEngine {
     this.hasCollision = false;
     this.projectileSpeed = 10;
     this.level = 1;
-   
   }
 
   gameOver(contentMenu) {
