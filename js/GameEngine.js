@@ -518,7 +518,7 @@ class GameEngine {
     tutorialElement.classList.add("fade-out");
     setTimeout(()=>{
       tutorialElement.style.display= "none";
-    },5500)
+    },7000)
 
     
   }
