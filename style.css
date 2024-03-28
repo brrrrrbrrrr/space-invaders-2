@@ -1,5 +1,5 @@
 @property --gradient-angle {
-  syntax: '<angle>';
+  syntax: "<angle>";
   initial-value: 0deg;
   inherits: false;
 }
@@ -8,7 +8,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Orbitron', sans-serif;
+  font-family: "Orbitron", sans-serif;
   font-optical-sizing: auto;
   font-weight: bold;
   font-style: normal;
@@ -35,7 +35,7 @@ body {
 
 canvas {
   position: relative;
-  background: url('./assets/images/Space.png') repeat 0 0;
+  background: url("./assets/images/Space.png") repeat 0 0;
   width: 100%;
   height: 90vh;
   animation: galaxy 50s linear infinite;
@@ -68,11 +68,11 @@ canvas {
 }
 
 #menu::after {
-  content: '';
+  content: "";
 
   position: absolute;
   inset: -0.5rem;
-   background: conic-gradient(
+  background: conic-gradient(
     from var(--gradient-angle),
     var(--clr-4),
     var(--clr-7),
@@ -91,7 +91,7 @@ canvas {
 }
 
 #contentMenu {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-weight: 500;
   font-style: normal;
   color: var(--clr-8);
@@ -105,7 +105,7 @@ canvas {
   font-size: 20px;
   border-radius: 20px;
   background-color: var(--clr-5);
-   position: relative;
+  position: relative;
   cursor: pointer;
   outline: none;
   box-shadow: 0px 6px var(--clr-7);
@@ -143,14 +143,13 @@ canvas {
 }
 
 #bottom-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    height: 10vh;
-    /* width: 100vw; */
-
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  height: 10vh;
+  /* width: 100vw; */
 
   background: var(--clr-5);
 }
@@ -158,4 +157,86 @@ canvas {
 .data {
   font-size: 25px;
   margin-left: 1rem;
+}
+
+#tutorial {
+  display: none; /* Masquer la div par défaut */
+  color: #fff; /* Couleur du texte lorsque la div est cachée */
+  padding: 10px; /* Ajouter un peu de rembourrage pour la visibilité */
+  position: absolute;
+  top: 15%;
+  left: 25%;
+  height: 60%;
+  width: 50%;
+  z-index: 1; /* Assurez-vous que la div s'affiche au-dessus du conic gradient */
+}
+
+#tutorial::after {
+  content: "";
+  position: absolute;
+  inset: -0.5rem;
+  background: conic-gradient(
+    from var(--gradient-angle),
+    var(--clr-4),
+    var(--clr-7),
+    var(--clr-4),
+    var(--clr-7),
+    var(--clr-4)
+  );
+  animation: rotation 20s linear infinite;
+  border-radius: 1.5rem;
+  filter: blur(3.5rem);
+}
+
+#tutorial p {
+  z-index: 1;
+  margin: 3rem;
+  display: flex;
+  align-items: center;
+  height: 2rem;
+}
+
+#tutorial img {
+  padding: 1rem;
+ 
+}
+.move-img {
+  transition: transform 2s; 
+}
+
+.move-img#arrow-left {
+  animation: pressAnimationLeft 0.5s alternate infinite;
+}
+.move-img#arrow-right {
+  animation: pressAnimationRight 0.5s alternate infinite;
+}
+
+
+@keyframes pressAnimationLeft {
+  from {
+      transform: scale(1);
+  }
+  to {
+      transform: scale(0.9);
+  }
+}
+@keyframes pressAnimationRight {
+  from {
+      transform: scale(0.9);
+  }
+  to {
+      transform: scale(1);
+  }
+}
+@keyframes fadeOut {
+  from {
+      opacity: 1;
+  }
+  to {
+      opacity: 0;
+  }
+}
+
+.fade-out {
+  animation: fadeOut 7s ease forwards;
 }
