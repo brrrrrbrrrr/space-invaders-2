@@ -25,7 +25,6 @@ class GameEngine {
   projectileSpeed = null;
   invaderProjectiles = [];
   explosions = [];
-  //Liste de projectiles des invaders
   intervalId = null;
   bonusPosition = null;
 
@@ -125,7 +124,6 @@ class GameEngine {
           invader.directionX *= -1;
         }
         if (invader.y + invader.height > this.canvas.height) {
-          // invader.y = this.canvas.height - invader.height;
           this.invadersOnEarth = true;
           invader.y = this.canvas.height - invader.height;
           this.invadersSpeed = 0;
@@ -295,8 +293,6 @@ class GameEngine {
     }
   }
 
-  //*************************************************************************************//
-
   //******************************EXPLOSIONS***********************************//
   explosionInvaders(item) {
     const explosion = new Explosion(null, null);
@@ -342,11 +338,6 @@ class GameEngine {
         return !explosion.isFinished;
       });
     }
-
-    // if (this.collisionItem()) {
-    //     this.player.x = prevX
-    //     this.player.y = prevY
-    // }
 
     this.destroyPlayer();
     this.destroyInvaders();
