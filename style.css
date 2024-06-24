@@ -1,5 +1,5 @@
 @property --gradient-angle {
-  syntax: "<angle>";
+  syntax: '<angle>';
   initial-value: 0deg;
   inherits: false;
 }
@@ -8,7 +8,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Orbitron", sans-serif;
+  font-family: 'Orbitron', sans-serif;
   font-optical-sizing: auto;
   font-weight: bold;
   font-style: normal;
@@ -35,7 +35,7 @@ body {
 
 canvas {
   position: relative;
-  background: url("./assets/images/Space.png") repeat 0 0;
+  background: url('./assets/images/Space.png') repeat 0 0;
   width: 100%;
   height: 90vh;
   animation: galaxy 50s linear infinite;
@@ -48,6 +48,25 @@ canvas {
   to {
     background-position: 0 100vh;
   }
+}
+
+#titleMenuModal {
+  font-size: 50px;
+  text-shadow: 3px 3px 0 var(--clr-6);
+}
+
+#span-modal {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  color: var(--clr-8);
+  text-shadow: 2px 2px 0 var(--clr-9);
+  font-size: 30px;
+  line-height: normal;
+}
+#modal {
+  display: none;
+  z-index: 2;
 }
 
 #menu {
@@ -68,7 +87,7 @@ canvas {
 }
 
 #menu::after {
-  content: "";
+  content: '';
 
   position: absolute;
   inset: -0.5rem;
@@ -91,7 +110,7 @@ canvas {
 }
 
 #contentMenu {
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 500;
   font-style: normal;
   color: var(--clr-8);
@@ -150,7 +169,7 @@ canvas {
   justify-content: center;
   height: 10vh;
   /* width: 100vw; */
-color: var(--clr-8);
+  color: var(--clr-8);
   background: var(--clr-9);
 }
 
@@ -172,7 +191,7 @@ color: var(--clr-8);
 }
 
 #tutorial::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: -0.5rem;
   background: conic-gradient(
@@ -198,10 +217,9 @@ color: var(--clr-8);
 
 #tutorial img {
   padding: 1rem;
- 
 }
 .move-img {
-  transition: transform 2s; 
+  transition: transform 2s;
 }
 
 .move-img#arrow-left {
@@ -211,32 +229,42 @@ color: var(--clr-8);
   animation: pressAnimationRight 0.5s alternate infinite;
 }
 
-
 @keyframes pressAnimationLeft {
   from {
-      transform: scale(1);
+    transform: scale(1);
   }
   to {
-      transform: scale(0.9);
+    transform: scale(0.9);
   }
 }
 @keyframes pressAnimationRight {
   from {
-      transform: scale(0.9);
+    transform: scale(0.9);
   }
   to {
-      transform: scale(1);
+    transform: scale(1);
   }
 }
 @keyframes fadeOut {
   from {
-      opacity: 1;
+    opacity: 1;
   }
   to {
-      opacity: 0;
+    opacity: 0;
   }
 }
 
 .fade-out {
   animation: fadeOut 7s ease forwards;
+}
+
+@media screen and (max-width: 1200px) {
+  #modal {
+    display: block;
+  }
+  #titleMenu,
+  #contentMenu,
+  #startBtn {
+    display: none;
+  }
 }
